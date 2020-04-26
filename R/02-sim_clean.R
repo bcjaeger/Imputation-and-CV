@@ -1,0 +1,68 @@
+
+# The total number of settings in this simulation is 72
+# - 2 missing data patterns
+# - 4 sample sizes
+# - 3 covariate structures
+# - 3 data generation scenarios
+
+library(tidyverse)
+library(tblStrings)
+
+directories <- list.dirs(
+  path = 'results/simulation', 
+  full.names = TRUE,
+  recursive = FALSE
+)
+
+#directories <- directories[1:3]
+
+data_files <- directories %>% 
+  str_remove('results/simulation/_rslurm_sim_x_') %>% 
+  str_split('_x_') %>% 
+  map(set_names, c('date','scenario','seeds')) %>% 
+  enframe(name = 'directory') %>% 
+  unnest_wider(value) %>% 
+  mutate(directory = directories)
+
+data_files_latest <- data_files %>% 
+  group_by(scenario, seeds) %>% 
+  arrange(desc(date)) %>% 
+  slice(1) %>% 
+  ungroup() 
+
+data_full <- data_files_latest %>% 
+  transmute(
+    scenario,
+    seeds,
+    files = map(directory, list.files, 
+      pattern = 'results_', full.names = TRUE)
+  ) %>% 
+  unnest(cols = files) %>% 
+  mutate(files = map(files, ~read_rds(.x)[[1]]))
+
+data_out <- data_full %>% 
+  unnest(cols = files) %>% 
+  arrange(scenario, miss_mech, seed) %>% 
+  unite(nx, nz, col = 'ncov') %>% 
+  mutate(
+    scenario = recode(
+      scenario, 
+      'noGroups'         = 's1', 
+      'wGroups_observed' = 's2', 
+      'wGroups_latent'   = 's3'
+    ),
+    ncov = recode(
+      ncov, 
+      '10_10'  = '10 predictors, 10 junk', 
+      '10_40'  = '10 predictors, 40 junk',
+      '10_490' = '10 predictors, 490 junk'
+    )
+  ) %>% 
+  unite(scenario, miss_mech, col = 'key') %>% 
+  select(key, seeds, seed, ncov, nobs, compute_time, results)
+
+write_rds(data_out, 'results/02-sim_clean.rds')
+
+
+
+
