@@ -1,0 +1,5 @@
+.Rhistory
+.RData
+.Rproj.user
+results/02-sim_clean.rds
+results/simulation
