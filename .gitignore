@@ -3,4 +3,5 @@
 .Rproj.user
 results/02-sim_clean.rds
 results/simulation
+diagrams/*.pptx
 SIM_Instructions
