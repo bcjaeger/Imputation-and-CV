@@ -34,6 +34,12 @@ output: rticles::sim_article
 \newcommand{\icv}{$\texttt{I}\!\!\rightarrow\!\texttt{CV}$}
 \newcommand{\cvi}{$\texttt{CV}\!\circlearrowright\!\texttt{I}$}
 
+```{r}
+
+knitr::opts_chunk$set(echo = FALSE, message = FALSE)
+
+```
+
 
 # Introduction
 
@@ -47,9 +53,9 @@ Missing data (MD) occur frequently in applied settings, and several machine lear
 
 In this manuscript, we identify scenarios when reliable model error estimates can (or cannot) be computed using unsupervised imputation \emph{before} CV (a strategy we will refer to as \icv). We compare estimated model error according to \icv\space with estimated model error when imputation is applied \emph{during each replicate} of CV (a strategy hereafter referred to as \cvi). To objectively compare the accuracy of model error estimates using \icv\space and \cvi, we compute `true' model error using an external validation set with MD. Both simulated and real data are leveraged to draw these comparisons. Our analysis also introduces and applies the \texttt{ipa} R package (\textbf{i}mputation for \textbf{p}redictive \textbf{a}nalytics), which provides functions to create single or multiple imputed training and testing sets for prediction modeling. 
 
-The rest of this manuscript is organized as follows. In Section \ref{sec_app}, we summarize results from experiments using real data from public repositories. Results are summarized alongside our recommendations for applied practice in Section \ref{sec_discuss}
+The rest of this manuscript is organized as follows. In Section \ref{sec:app}, we summarize results from experiments using real data from public repositories. Results are summarized alongside our recommendations for applied practice in Section \ref{sec:discuss}
 
-\section{Missing data and cross-validation} \label{sec_mdcv}
+\section{Missing data and cross-validation} \label{sec:mdcv}
 
 <!-- % P1 discuss types of missing data: MCAR / MAR / MNAR -->
 <!-- %  1. MCAR (no bias, but efficiency) -->
@@ -122,7 +128,7 @@ It is not unusual to separate training and validation data before performing eve
 <!-- %  use stacked data. (perhaps add details about when this is used) -->
 <!-- % we are focusing on the first one b/c it's recommended and frequently used -->
 
-\section{Simulated experiments} \label{sec_sim}
+\section{Simulated experiments} \label{sec:sim}
 
 <!-- % P1 intro to simulation -->
 <!-- %  point out that theoretical results are difficult to obtain -->
@@ -178,11 +184,18 @@ In addition to varying parameters in the data-generation process, we also consid
 
  <!-- P5 results (pulling some facts from tables) -->
 
+\subsection{Results} \label{subsec:sim_results}
+
+```{r, out.width='100%', fig.cap='External generalization error and internal estimates of generalization error using \\icv\\space and \\cvi \\label{fig:sim_r2}'}
+
+knitr::include_graphics('figs/sim_r2.png')
+
+```
 
 
-\section{Real data experiments} \label{sec_app}
+\section{Real data experiments} \label{sec:app}
 
-\section{Discussion and recommendations} \label{sec_discuss}
+\section{Discussion and recommendations} \label{sec:discuss}
 
 <!-- % P1 summary -->
 
