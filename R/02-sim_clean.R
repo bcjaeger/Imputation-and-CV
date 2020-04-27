@@ -61,6 +61,26 @@ data_out <- data_full %>%
   unite(scenario, miss_mech, col = 'key') %>% 
   select(key, seeds, seed, ncov, nobs, compute_time, results)
 
+
+sim_count_expected <- length(directories) * 6000
+sim_count_observed <- nrow(data_out)
+
+sim_count_failed <- sim_count_expected - sim_count_observed
+sim_prop_converged <- sim_count_observed / sim_count_expected
+
+sim_prop_converged_perc <- sim_prop_converged %>% 
+  magrittr::multiply_by(100) %>% 
+  round(digits = 2) %>% 
+  paste0('%')
+
+sim_desc <- list(
+  expected = format(sim_count_expected, big.mark = ','),
+  observed = format(sim_count_observed, big.mark = ','),
+  converged = sim_prop_converged_perc
+)
+
+write_rds(sim_desc, 'results/02-sim_descriptives.rds')
+
 write_rds(data_out, 'results/02-sim_clean.rds')
 
 
