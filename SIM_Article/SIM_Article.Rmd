@@ -42,7 +42,6 @@ sim_desc <- readr::read_rds('../results/02-sim_descriptives.rds')
 
 ```
 
-
 # Introduction
 
 <!-- Welcome! please feel free to make edits and submit pull requests. -->
@@ -85,8 +84,21 @@ In the context of supervised statistical learning, data often include a training
 
 <!-- % additional text that I left of the previous paragraph: Although multiple imputation has been shown to increase the prediction accuracy of downstream models, the computational overhead of multiple imputation is not ideal. It is generally assumed that the accuracy of downstream models trained on the imputed data will be increased by making the imputed data more closely resemble the unobserved complete data.  -->
 
-There are at least two ways to evaluate the effectiveness of an imputation strategy. One approach is to evaluate how accurately the strategy imputes unobserved data. However, imputation accuracy can only be measured when the values of unobserved data are known, which limits its practical use. Another approach is to evaluate the generalization error of models fitted to the imputed data. This approach is applicable in any setting involving supervised learning. Evaluating imputation strategies in this manner also allows imputation parameters to be `tuned' in the same manner as parameters in the prediction model. As the focus of this manuscript is to investigate whether imputation can occur before CV without biasing estimates for generalization error, we do not highlight the accuracy of imputed values and focus exclusively on generalization error.  
+<!-- <we focus on generalization error> -->
 
+<!-- <this involves estimating error and picking good tuning parameters> -->
+
+<!-- <this contrasts with imputation accuracy; presumably correlated> -->
+
+There are at least two ways to evaluate the effectiveness of an imputation strategy. One approach is to evaluate how accurately the strategy imputes unobserved data. However, imputation accuracy can only be measured when the values of unobserved data are known, which limits its practical use. Another approach is to evaluate the generalization error of models fitted to the imputed data. This approach is applicable in any setting involving supervised learning. Evaluating imputation strategies in this manner also allows imputation parameters to be 'tuned' in the same manner as parameters in the prediction model. The current manuscript focusses exclusively on generalization error. <something about picking the right tuning parameters, and something else about estimating the error with as little bias as possible>
+
+
+
+```{r, out.width='100%', fig.cap='A standard workflow for machine learning analysis.\\label{fig:workflow_ml}'}
+
+knitr::include_graphics('../diagrams/workflow_ML.png')
+
+```
 
 
 <!-- % P4 workflow for engaging with missing data in predictive modeling -->
@@ -103,9 +115,18 @@ There are at least two ways to evaluate the effectiveness of an imputation strat
 
 <!-- Noah work on this! -->
 
+<!-- Add diagrams for the CV methods -->
+
 When employing supervised learning methods with split-sample-validation or cross-validation, it is critical that training data is separated from validation data before any "learning" is done: \emph{The entire supervised pipeline must be run using only training data}. This applies both to the fitting procedure (eg. applying linear regression, or random forests, etc...), and to any supervised preprocessing steps. There are a number of examples in the literature where wildly optimistic estimates of validation error have been obtained because supervised variable selection was performed on the entire dataset, rather than just the training sample (CITE). In scenarios with a larger number of features, even simple methodologies, eg. selecting those features with high individual correlation with outcome, can induce substantial bias (CITE).
 
 It is not unusual to separate training and validation data before performing even unsupervised preprocessing steps. For example, in many supervised learning frameworks, it is common to center and scale features, such that they are mean $0$, variance $1$ before engaging with the outcome. As this does not involve the outcome, it is entirely unsupervised. Nonetheless to most accurately replicate the "fitting process" in each replicate of CV, it is common to learn the centering and scaling parameters for each feature in each training subset, and apply those parameters to center/scale features in the corresponding validation subset (CITE).
+
+```{r, out.width='100%', fig.cap='The workflow for \\cvi (\\ie traditional cross-validation).\\label{fig:workflow_cvi}'}
+
+knitr::include_graphics('../diagrams/workflow_CVI.png')
+
+```
+
 
 <!-- % P1 talk about the importance of order or operations for supervised learning -->
 <!-- %   example - mean/scale in each fold versus before CV -->
