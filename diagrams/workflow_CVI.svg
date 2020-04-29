@@ -627,9 +627,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="429.67084"
-     inkscape:cy="945.10046"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="326.5703"
+     inkscape:cy="676.7549"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -658,6 +658,14 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 92.927763,113.82771 48.188717,0"
+       id="path16481"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#path3747-4-2-5-5"
+       inkscape:connection-end="#g13997-5" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="M 50.270833,74.75 V 40.354167 h 9.260416"
@@ -1307,7 +1315,9 @@
          x="76.360184"
          y="75.482483"
          style="font-size:3.52777767px;text-align:center;text-anchor:middle;stroke-width:0.23009804"
-         id="tspan14777">assessment set 1</tspan></text>
+         id="tspan14777">assessment set 1<tspan
+   style="font-size:65%;baseline-shift:super"
+   id="tspan16458">*</tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:3.52777767px;line-height:1.25;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.23009804"
@@ -1324,7 +1334,9 @@
          x="76.360191"
          y="24.815208"
          style="font-size:3.52777767px;text-align:center;text-anchor:middle;stroke-width:0.23009804"
-         id="tspan14775">analysis set 1</tspan></text>
+         id="tspan14775">analysis set 1<tspan
+   style="font-size:65%;baseline-shift:super"
+   id="tspan16456">*</tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:3.52777767px;line-height:1.25;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.23009804"
@@ -1527,13 +1539,6 @@
            id="tspan4202-2-2-4"
            sodipodi:role="line">Model k</tspan></text>
     </g>
-    <path
-       style="display:inline;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 75.879404,113.82771 65.237076,-0.4371"
-       id="path14025-0"
-       inkscape:connector-type="polyline"
-       inkscape:connector-curvature="0"
-       inkscape:connection-end="#g13997-5" />
     <path
        style="opacity:1;fill:#ffffff;stroke:#000000;stroke-width:0.19472134;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 98.50011,113.89621 V 102.5997 h 17.04839 17.04833 v 11.29651 11.29646 H 115.5485 98.50011 Z"
@@ -1975,5 +1980,17 @@
        d="m 42.333333,85.333337 h 7.9375"
        id="path16084"
        inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:3.52777767px;line-height:1.25;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.23009804"
+       x="99.24305"
+       y="161.77412"
+       id="text3725-0-9-7"
+       transform="scale(0.99944272,1.0005576)"><tspan
+         sodipodi:role="line"
+         x="99.24305"
+         y="161.77412"
+         style="font-size:3.52777767px;text-align:center;text-anchor:middle;stroke-width:0.23009804"
+         id="tspan14777-0-3">* analysis and assessment sets play the roles of training and testing, respectively, during cross-validation</tspan></text>
   </g>
 </svg>
