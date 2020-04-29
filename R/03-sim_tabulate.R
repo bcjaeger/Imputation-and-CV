@@ -9,6 +9,9 @@ library(kableExtra)
 
 sim_full <- read_rds('results/02-sim_clean.rds') 
 
+# general footnote for tables
+mse_source_note <- 'All values are scaled by 100 for convenience'
+
 # create mse data ---------------------------------------------------------
 
 mse_values <- sim_full %>% 
@@ -37,8 +40,8 @@ mse_smry <- mse_values %>%
     abs_diff_sd = sd(abs_diff),
     cv_imp_rbs  = 100 * mean(ex_dat - cv_imp),
     imp_cv_rbs  = 100 * mean(ex_dat - imp_cv),
-    cv_imp_std   = 100 * sd(cv_imp),
-    imp_cv_std   = 100 * sd(imp_cv),
+    cv_imp_std  = 100 * sd(cv_imp),
+    imp_cv_std  = 100 * sd(imp_cv),
     cv_imp_rmse = 100 * rmse_vec(ex_dat, cv_imp),
     imp_cv_rmse = 100 * rmse_vec(ex_dat, imp_cv)
   ) %>% 
@@ -65,11 +68,77 @@ cmp_times_smry <- cmp_times %>%
     diff_raw_sd = sd(diff_raw),
     diff_rel_mn = mean(diff_rel),
     diff_rel_sd = sd(diff_rel)
-  )
+  ) %>% 
+  ungroup()
+
+
+# make some datasets to pass into kable function --------------------------
+
+kbl_mse <- mse_smry %>% 
+  transmute(
+    key, nobs, ncov, 
+    external = as.character(
+      100 * pointErr(external_mn, external_sd, style = 'brac')
+    )
+  ) %>% 
+  pivot_wider(names_from = key, values_from = external) %>% 
+  arrange(ncov, nobs)
+
+kbl_cv_diffs <- mse_smry %>% 
+  transmute(
+    key, nobs, ncov, 
+    cv_diffs = as.character(
+      100 * pointErr(abs_diff_mn, abs_diff_sd, style = 'brac')
+    )
+  ) %>% 
+  pivot_wider(names_from = key, values_from = cv_diffs)  %>% 
+  arrange(ncov, nobs)
+  
+kbl_df_cmp <- cmp_times_smry %>% 
+  mutate(diff_rel = pointErr(diff_rel_mn, diff_rel_sd, style = 'brac')) %>% 
+  select(key, nobs, ncov, action, diff_rel) %>%
+  mutate_if(is_pointErr, as.character) %>% 
+  pivot_wider(names_from = c(action, key), values_from = diff_rel)  %>% 
+  arrange(ncov, nobs)
 
 # a function for tabulating with kable ------------------------------------
 
-tabulate_errors <- function(data, type, format = 'latex', caption){
+tabulate_pointErrs <- function(data, format = 'latex', 
+  h1_label, caption, label){
+  
+  rowpack_index <- table(data$ncov)
+  
+  h1 <- c(" ", 
+    "Scenario 1" = 2, 
+    "Scenario 2" = 2, 
+    "Scenario 3" = 2
+  )
+  
+  cnames <- c("N", rep(h1_label, times = 3))
+  
+  align_L <- "l"
+  align_C <- rep("c", ncol(data) - 2)
+  
+  align <- c(align_L, align_C)
+  
+  data %>%
+    select(-ncov) %>% 
+    kable(format = format, col.names = cnames, booktabs = TRUE,
+      align = align, caption = caption, label = label, escape = FALSE) %>% 
+    kable_styling() %>% 
+    pack_rows(
+      index = rowpack_index, 
+      hline_before = FALSE, 
+      hline_after = TRUE,
+      latex_gap_space = "0.75em"
+    ) %>% 
+    add_header_above(header = h1) %>% 
+    add_footnote(notation = 'none', label = mse_source_note)
+  
+  
+}
+
+tabulate_errors <- function(data, type, format = 'latex', caption, label){
   
   kbl_df <- data %>% 
     select(key, nobs, ncov, ends_with(type)) %>% 
@@ -116,31 +185,66 @@ tabulate_errors <- function(data, type, format = 'latex', caption){
     select(-ncov) %>% 
     mutate_at(vars(contains('..')), tbv_round) %>% 
     kable(format = format, col.names = cnames, booktabs = TRUE,
-      align = align, caption = caption, escape = FALSE) %>% 
+      align = align, caption = caption, label = label, escape = FALSE) %>% 
     kable_styling() %>% 
-    pack_rows(index = rowpack_index, 
-      hline_before = TRUE, hline_after = TRUE) %>% 
+    pack_rows(
+      index = rowpack_index, 
+      hline_before = FALSE, 
+      hline_after = TRUE,
+      latex_gap_space = "0.75em"
+    ) %>% 
     add_header_above(header = h1) %>% 
     add_header_above(header = h2) %>% 
     add_footnote(notation = 'none', label = mse_source_note)
   
 }
 
+# external r-squared table ------------------------------------------------
+
+tbl_ext_rsq <- tabulate_pointErrs(
+  data = kbl_mse, 
+  h1_label = c("MAR", "MCAR"),
+  caption = 'True external $R^2$ values for the modeling technique that is internally assessed using \\cvi\\space and \\icv.', 
+  label = 'ext_rsq'
+)
+
+# absolute cv diffs table -------------------------------------------------
+
+tbl_cv_diffs <- tabulate_pointErrs(
+  data = kbl_cv_diffs, 
+  h1_label = c("MAR", "MCAR"),
+  caption = 'Mean absolute differences in estimates of external $R^2$ between \\cvi\\space and \\icv.', 
+  label = 'cv_diffs'
+)
+
+# computation time table --------------------------------------------------
+
+tbl_cmp_time <- tabulate_pointErrs(
+  data = kbl_df_cmp, 
+  h1_label = c("Make", "Model"),
+  caption = 'The ratio (standard deviation) of computational time required to make imputed datasets and fit imputed models to each dataset using \\cvi\\space (numerator) and \\icv (denominator).', 
+  label = 'cmp_time'
+)
+
+
 # bias table --------------------------------------------------------------
 
 tbl_bias <- tabulate_errors(mse_smry, type = 'rbs', 
-  caption = "Bias of external $R^2$ estimates using \\icv and \\cvi")
+  caption = "Bias of external $R^2$ estimates using \\cvi\\space and \\icv",
+  label = 'bias')
 
 
 # variance table ----------------------------------------------------------
 
 tbl_var <- tabulate_errors(mse_smry, type = 'std', 
-  caption = 'Variance of external $R^2$ estimates using \\icv and \\cvi')
+  caption = 'Standard deviation of external $R^2$ estimates using \\cvi\\space and \\icv.',
+  label = 'variance')
 
 # rmse table --------------------------------------------------------------
 
 tbl_rmse <- tabulate_errors(mse_smry, type = 'rmse', 
-  caption = 'Mean-squared error of external $R^2$ estimates using \\icv and \\cvi')
+  caption = 'Root-mean-squared error of external $R^2$ estimates using \\icv and \\cvi', 
+  label = 'rmse')
 
 
 # combine and save outputs ------------------------------------------------
@@ -148,8 +252,11 @@ tbl_rmse <- tabulate_errors(mse_smry, type = 'rmse',
 list(
   data_mse = mse_smry,
   data_cmp = cmp_times_smry,
-  kbl_bias = tbl_bias,
-  kbl_vrnc = tbl_var,
-  kbl_rmse = tbl_rmse
+  tbl_ext_rsq = tbl_ext_rsq,
+  tbl_cv_diffs = tbl_cv_diffs,
+  tbl_cmp_time = tbl_cmp_time,
+  tbl_bias = tbl_bias,
+  tbl_var = tbl_var,
+  tbl_rmse = tbl_rmse
 ) %>% 
   write_rds('results/03-sim_tabulate.rds')

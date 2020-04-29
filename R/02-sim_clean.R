@@ -79,6 +79,8 @@ sim_desc <- list(
   converged = sim_prop_converged_perc
 )
 
+print(sim_desc)
+
 write_rds(sim_desc, 'results/02-sim_descriptives.rds')
 
 write_rds(data_out, 'results/02-sim_clean.rds')

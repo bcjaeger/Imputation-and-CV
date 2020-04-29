@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6930 64-bit) (preloaded format=pdflatex 2019.1.20)  28 APR 2020 21:43
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6930 64-bit) (preloaded format=pdflatex 2019.1.20)  29 APR 2020 15:56
 entering extended mode
 **./SIM_Article.tex
 (SIM_Article.tex
@@ -918,6 +918,10 @@ Package: longtable 2014/10/28 v4.11 Multi-page Table package (DPC)+ FMi change
 \c@LT@chunks=\count346
 \LT@p@ftn=\toks45
 )
+("C:\Users\bcjaeger\AppData\Local\Programs\MiKTeX 2.9\tex/latex/placeins\placei
+ns.sty"
+Package: placeins 2005/04/18  v 2.2
+)
 
 LaTeX Warning: Unused global option(s):
     [AMA,STIX1COL,doublespace].
@@ -926,49 +930,40 @@ LaTeX Warning: Unused global option(s):
 
 LaTeX Warning: Label `fig:workflow_cvi' multiply defined.
 
-
-LaTeX Warning: Label `fig:workflow_cvi' multiply defined.
-
-
-LaTeX Warning: Label `tab:' multiply defined.
-
-
-LaTeX Warning: Label `tab:' multiply defined.
-
 )
 \openout1 = `SIM_Article.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 28.
-LaTeX Font Info:    ... okay on input line 28.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 28.
-LaTeX Font Info:    ... okay on input line 28.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 28.
-LaTeX Font Info:    ... okay on input line 28.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 28.
-LaTeX Font Info:    ... okay on input line 28.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 28.
-LaTeX Font Info:    ... okay on input line 28.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 28.
-LaTeX Font Info:    ... okay on input line 28.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 28.
-LaTeX Font Info:    ... okay on input line 28.
-LaTeX Font Info:    Checking defaults for LS1/stix/m/n on input line 28.
-LaTeX Font Info:    Try loading font information for LS1+stix on input line 28.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for LS1/stix/m/n on input line 25.
+LaTeX Font Info:    Try loading font information for LS1+stix on input line 25.
 
 ("C:\Users\bcjaeger\AppData\Local\Programs\MiKTeX 2.9\tex/latex/stix\ls1stix.fd
 "
 File: ls1stix.fd 2015/04/17 v1.1.2-latex STIX LS1 font definitions
 )
-LaTeX Font Info:    ... okay on input line 28.
-LaTeX Font Info:    Checking defaults for LS2/stix/m/n on input line 28.
-LaTeX Font Info:    Try loading font information for LS2+stix on input line 28.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for LS2/stix/m/n on input line 25.
+LaTeX Font Info:    Try loading font information for LS2+stix on input line 25.
 
 ("C:\Users\bcjaeger\AppData\Local\Programs\MiKTeX 2.9\tex/latex/stix\ls2stix.fd
 "
 File: ls2stix.fd 2015/04/17 v1.1.2-latex STIX LS2 font definitions
 )
-LaTeX Font Info:    ... okay on input line 28.
-LaTeX Font Info:    Try loading font information for T1+stix on input line 28.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Try loading font information for T1+stix on input line 25.
 ("C:\Users\bcjaeger\AppData\Local\Programs\MiKTeX 2.9\tex/latex/stix\t1stix.fd"
 File: t1stix.fd 2015/04/17 v1.1.2-latex STIX T1 font definitions
 )
@@ -1014,7 +1009,7 @@ Package: ltcaption 2018/08/26 v1.4-95 longtable captions (AR)
 Package caption Info: wrapfig package is loaded.
 Package caption Info: End \AtBeginDocument code.
 \AtBeginShipoutBox=\box87
-Package hyperref Info: Link coloring OFF on input line 28.
+Package hyperref Info: Link coloring OFF on input line 25.
 
 ("C:\Users\bcjaeger\AppData\Local\Programs\MiKTeX 2.9\tex/latex/hyperref\namere
 f.sty"
@@ -1026,9 +1021,9 @@ Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
 \c@section@level=\count353
 )
-LaTeX Info: Redefining \ref on input line 28.
-LaTeX Info: Redefining \pageref on input line 28.
-LaTeX Info: Redefining \nameref on input line 28.
+LaTeX Info: Redefining \ref on input line 25.
+LaTeX Info: Redefining \pageref on input line 25.
+LaTeX Info: Redefining \nameref on input line 25.
 
 ("C:\Users\bcjaeger\AppData\Local\Programs\MiKTeX 2.9\tex/latex/setspace\setspa
 ce.sty"
@@ -1072,18 +1067,18 @@ Package: setspace 2011/12/19 v6.7a set line spacing
 
 \c@lstlisting=\count354
 LaTeX Font Info:    Font shape `T1/stix/bx/n' in size <9> not available
-(Font)              Font shape `T1/stix/b/n' tried instead on input line 71.
+(Font)              Font shape `T1/stix/b/n' tried instead on input line 68.
 LaTeX Font Info:    Font shape `T1/stix/bx/n' in size <18> not available
-(Font)              Font shape `T1/stix/b/n' tried instead on input line 71.
+(Font)              Font shape `T1/stix/b/n' tried instead on input line 68.
 LaTeX Font Info:    Try loading font information for LS1+stixscr on input line 
-71.
+68.
 
 ("C:\Users\bcjaeger\AppData\Local\Programs\MiKTeX 2.9\tex/latex/stix\ls1stixscr
 .fd"
 File: ls1stixscr.fd 2015/04/17 v1.1.2-latex STIX script LS1 font definitions
 )
-LaTeX Font Info:    Try loading font information for LS2+stixex on input line 7
-1.
+LaTeX Font Info:    Try loading font information for LS2+stixex on input line 6
+8.
 
 ("C:\Users\bcjaeger\AppData\Local\Programs\MiKTeX 2.9\tex/latex/stix\ls2stixex.
 fd"
@@ -1091,14 +1086,14 @@ File: ls2stixex.fd 2015/04/17 v1.1.2-latex STIX extentions LS2 font definitions
 
 )
 LaTeX Font Info:    Try loading font information for LS1+stixfrak on input line
- 71.
+ 68.
 
 ("C:\Users\bcjaeger\AppData\Local\Programs\MiKTeX 2.9\tex/latex/stix\ls1stixfra
 k.fd"
 File: ls1stixfrak.fd 2015/04/17 v1.1.2-latex STIX fraktur LS1 font definitions
 )
-LaTeX Font Info:    Try loading font information for LS1+stixbb on input line 7
-1.
+LaTeX Font Info:    Try loading font information for LS1+stixbb on input line 6
+8.
 
 ("C:\Users\bcjaeger\AppData\Local\Programs\MiKTeX 2.9\tex/latex/stix\ls1stixbb.
 fd"
@@ -1106,23 +1101,23 @@ File: ls1stixbb.fd 2015/04/17 v1.1.2-latex STIX blackboard LS1 font definitions
 
 )
 LaTeX Font Info:    Try loading font information for LS2+stixcal on input line 
-71.
+68.
 
 ("C:\Users\bcjaeger\AppData\Local\Programs\MiKTeX 2.9\tex/latex/stix\ls2stixcal
 .fd"
 File: ls2stixcal.fd 2015/04/17 v1.1.2-latex STIX calligraphic LS2 font definiti
 ons
 )
-LaTeX Font Info:    Try loading font information for LS1+stixsf on input line 7
-1.
+LaTeX Font Info:    Try loading font information for LS1+stixsf on input line 6
+8.
 
 ("C:\Users\bcjaeger\AppData\Local\Programs\MiKTeX 2.9\tex/latex/stix\ls1stixsf.
 fd"
 File: ls1stixsf.fd 2015/04/17 v1.1.2-latex STIX sans-serif LS1 font definitions
 
 )
-LaTeX Font Info:    Try loading font information for LS2+stixtt on input line 7
-1.
+LaTeX Font Info:    Try loading font information for LS2+stixtt on input line 6
+8.
 
 ("C:\Users\bcjaeger\AppData\Local\Programs\MiKTeX 2.9\tex/latex/stix\ls2stixtt.
 fd"
@@ -1130,15 +1125,15 @@ File: ls2stixtt.fd 2015/04/17 v1.1.2-latex STIX typewriter LS2 font definitions
 
 )
 LaTeX Font Info:    Font shape `T1/stix/bx/n' in size <8> not available
-(Font)              Font shape `T1/stix/b/n' tried instead on input line 71.
+(Font)              Font shape `T1/stix/b/n' tried instead on input line 68.
 LaTeX Font Info:    Font shape `T1/stix/bx/n' in size <10> not available
-(Font)              Font shape `T1/stix/b/n' tried instead on input line 71.
+(Font)              Font shape `T1/stix/b/n' tried instead on input line 68.
 
-Overfull \hbox (346.99213pt too wide) in paragraph at lines 71--71
+Overfull \hbox (346.99213pt too wide) in paragraph at lines 68--68
 [][] | || []|[][] 
  []
 
-LaTeX Font Info:    Calculating math sizes for size <10.03749> on input line 71
+LaTeX Font Info:    Calculating math sizes for size <10.03749> on input line 68
 .
 
 Overfull \vbox (6.46347pt too high) has occurred while \output is active []
@@ -1148,81 +1143,62 @@ Overfull \vbox (6.46347pt too high) has occurred while \output is active []
 \openout3 = `SIM_Article.pag'.
 
 ]
-LaTeX Font Info:    Try loading font information for T1+cmtt on input line 104.
+LaTeX Font Info:    Try loading font information for T1+cmtt on input line 101.
 
 ("C:\Users\bcjaeger\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\t1cmtt.fd"
 File: t1cmtt.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `T1/stix/bx/n' in size <10.03749> not available
-(Font)              Font shape `T1/stix/b/n' tried instead on input line 133.
+(Font)              Font shape `T1/stix/b/n' tried instead on input line 130.
 LaTeX Font Info:    Font shape `T1/stix/bx/n' in size <7> not available
-(Font)              Font shape `T1/stix/b/n' tried instead on input line 170.
+(Font)              Font shape `T1/stix/b/n' tried instead on input line 167.
 [2] [3]
 <../diagrams/workflow_ML.png, id=38, 574.0647pt x 337.26pt>
 File: ../diagrams/workflow_ML.png Graphic file (type png)
 <use ../diagrams/workflow_ML.png>
-Package pdftex.def Info: ../diagrams/workflow_ML.png  used on input line 226.
+Package pdftex.def Info: ../diagrams/workflow_ML.png  used on input line 223.
 (pdftex.def)             Requested size: 507.50787pt x 298.15858pt.
-<../diagrams/workflow_CVI.png, id=40, 570.4512pt x 412.1799pt>
+[4 <../diagrams/workflow_ML.png>]
+<../diagrams/workflow_CVI.png, id=46, 570.4512pt x 412.1799pt>
 File: ../diagrams/workflow_CVI.png Graphic file (type png)
 <use ../diagrams/workflow_CVI.png>
-Package pdftex.def Info: ../diagrams/workflow_CVI.png  used on input line 230.
+Package pdftex.def Info: ../diagrams/workflow_CVI.png  used on input line 254.
 (pdftex.def)             Requested size: 507.50787pt x 366.70686pt.
-<../diagrams/workflow_ICV.png, id=41, 548.5293pt x 398.6895pt>
+<../diagrams/workflow_ICV.png, id=47, 548.5293pt x 398.6895pt>
 File: ../diagrams/workflow_ICV.png Graphic file (type png)
 <use ../diagrams/workflow_ICV.png>
-Package pdftex.def Info: ../diagrams/workflow_ICV.png  used on input line 234.
+Package pdftex.def Info: ../diagrams/workflow_ICV.png  used on input line 258.
 (pdftex.def)             Requested size: 507.50787pt x 368.89151pt.
-[4 <../diagrams/workflow_ML.png>] [5 <../diagrams/workflow_CVI.png>]
-File: ../diagrams/workflow_CVI.png Graphic file (type png)
-<use ../diagrams/workflow_CVI.png>
-Package pdftex.def Info: ../diagrams/workflow_CVI.png  used on input line 265.
-(pdftex.def)             Requested size: 507.50787pt x 366.70686pt.
 LaTeX Font Info:    Font shape `T1/stix/bx/n' in size <12> not available
-(Font)              Font shape `T1/stix/b/n' tried instead on input line 268.
-[6 <../diagrams/workflow_ICV.png>] [7]
-Underfull \vbox (badness 10000) detected at line 377
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 379--380
-
- []
-
-
-Underfull \vbox (badness 10000) detected at line 415
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 417--418
-
- []
-
-<figs/sim_r2.png, id=72, 469.755pt x 433.62pt>
+(Font)              Font shape `T1/stix/b/n' tried instead on input line 261.
+[5] [6 <../diagrams/workflow_CVI.png>] [7 <../diagrams/workflow_ICV.png>]
+<figs/sim_r2.png, id=76, 469.755pt x 433.62pt>
 File: figs/sim_r2.png Graphic file (type png)
 <use figs/sim_r2.png>
-Package pdftex.def Info: figs/sim_r2.png  used on input line 548.
+Package pdftex.def Info: figs/sim_r2.png  used on input line 589.
 (pdftex.def)             Requested size: 507.50787pt x 468.46803pt.
-(SIM_Article.bbl [8] [9])
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 558.
-[10] [11] [12 <./figs/sim_r2.png>]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 558.
+[8] [9] [10] [11] [12 <./figs/sim_r2.png>] (SIM_Article.bbl)
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 597.
+[13
+
+]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 597.
 (SIM_Article.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 558.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 558.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 597.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 597.
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 558.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 597.
  ) 
 Here is how much of TeX's memory you used:
- 14702 strings out of 492946
- 210250 string characters out of 3124934
- 362054 words of memory out of 3000000
- 18287 multiletter control sequences out of 15000+200000
+ 14715 strings out of 492946
+ 210621 string characters out of 3124934
+ 365319 words of memory out of 3000000
+ 18297 multiletter control sequences out of 15000+200000
  97281 words of font info for 120 fonts, out of 3000000 for 9000
  1167 hyphenation exceptions out of 8191
- 43i,12n,40p,573b,433s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 43i,12n,40p,573b,381s stack positions out of 5000i,500n,10000p,200000b,50000s
  <C:\Users\bcjaeger\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi6
 00\ectt1000.pk>{C:/Users/bcjaeger/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/d
 vips/stix/stix-t1.enc}<C:/Users/bcjaeger/AppData/Local/Programs/MiKTeX 2.9/font
@@ -1233,9 +1209,9 @@ r/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/stix/STIXGeneral-Regular
 ix/stix-mathit.pfb><C:/Users/bcjaeger/AppData/Local/Programs/MiKTeX 2.9/fonts/t
 ype1/public/stix/stix-mathrm.pfb><C:/Users/bcjaeger/AppData/Local/Programs/MiKT
 eX 2.9/fonts/type1/public/stix/stix-mathsf.pfb>
-Output written on SIM_Article.pdf (12 pages, 722898 bytes).
+Output written on SIM_Article.pdf (13 pages, 725220 bytes).
 PDF statistics:
- 185 PDF objects out of 1000 (max. 8388607)
- 38 named destinations out of 1000 (max. 500000)
+ 190 PDF objects out of 1000 (max. 8388607)
+ 37 named destinations out of 1000 (max. 500000)
  109 words of extra memory for PDF output out of 10000 (max. 10000000)
 

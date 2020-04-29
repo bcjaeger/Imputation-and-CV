@@ -28,6 +28,7 @@ longtable: true
 classoption: doublespace
 output: rticles::sim_article
 header-includes:
+   - \usepackage{placeins}
    - \newcommand{\ie}{\textit{i.e., }}
    - \newcommand{\eg}{\textit{e.g., }}
    - \newcommand{\icv}{$\texttt{I}\!\!\rightarrow\!\texttt{CV}$}
@@ -43,95 +44,11 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE)
 # prevent scientific notation from printing 1ex for small / large numbers
 options(scipen = 99999)
 
-
 library(tidyverse)
-library(tblStrings)
-library(gt)
-
-# general footnote for tables
-mse_source_note <- 'All values are scaled by 100 for convenience'
 
 sim_desc <- read_rds('../results/02-sim_descriptives.rds')
 sim_tbls <- read_rds('../results/03-sim_tabulate.rds')
 
-scenario_recode <- function(x)
-  str_replace(x, pattern = '^S', replacement = 'Scenario ')
-
-
-```
-
-```{r, external-R-squared-table}  
-
-tbl_ex_rsq <- sim_tbls$data_mse %>% 
-  mutate(
-    external = 100 * pointErr(external_mn, external_sd, style = 'brac'),
-    cv_diffs = 100 * pointErr(abs_diff_mn, abs_diff_sd, style = 'brac')
-  ) %>% 
-  mutate_if(is_pointErr, as.character) %>% 
-  select(key, nobs, ncov, external) %>% 
-  pivot_wider(names_from = key, values_from = external) %>% 
-  rename_at(vars(contains('_')), toupper) %>% 
-  rename_at(vars(contains('_')), scenario_recode) %>% 
-  gt(rowname_col = 'nobs', groupname_col = 'ncov') %>% 
-  tab_spanner_delim(delim = '_') %>% 
-  tab_source_note(mse_source_note) %>% 
-  as_latex()
-
-```
-
-```{r, absolute-difference-between-cv-table}
-
-tbl_abs_diff <- sim_tbls$data_mse %>% 
-  mutate(
-    external = 100 * pointErr(external_mn, external_sd, style = 'brac'),
-    cv_diffs = 100 * pointErr(abs_diff_mn, abs_diff_sd, style = 'brac'),
-  ) %>% 
-  mutate_if(is_pointErr, as.character) %>% 
-  select(key, nobs, ncov, cv_diffs) %>% 
-  pivot_wider(
-    names_from = key, 
-    values_from = cv_diffs
-  ) %>% 
-  rename_at(vars(contains('_')), toupper) %>% 
-  rename_at(vars(contains('_')), scenario_recode) %>% 
-  gt(rowname_col = 'nobs', groupname_col = 'ncov') %>% 
-  tab_spanner_delim(delim = '_') %>% 
-  tab_source_note(mse_source_note) %>% 
-  as_latex()
-
-```
-
-```{r, computational-overhead-table}
-
-tbl_cmp_times <- sim_tbls$data_cmp %>% 
-  ungroup() %>% 
-  mutate(diff_rel = pointErr(diff_rel_mn, diff_rel_sd, style = 'brac')) %>% 
-  select(key, nobs, ncov, action, diff_rel) %>%
-  mutate_if(is_pointErr, as.character) %>% 
-  pivot_wider(names_from = c(action, key), values_from = diff_rel) %>% 
-  select(nobs, ncov, ends_with('1'), ends_with('2'), ends_with('3')) %>% 
-  gt(rowname_col = 'nobs', groupname_col = 'ncov') %>%
-  tab_stubhead(label = html('Observations </br> in training set')) %>%
-  tab_spanner(
-    columns = vars(make_s1, mdl_s1),
-    label = "Scenario 1"
-  ) %>%
-  tab_spanner(
-    columns = vars(make_s2, mdl_s2),
-    label = "Scenario 2"
-  ) %>%
-  tab_spanner(
-    columns = vars(make_s3, mdl_s3),
-    label = "Scenario 3"
-  ) %>%
-  cols_label(
-    make_s1 = 'Impute',
-    mdl_s1  = 'Fit',
-    make_s2 = 'Impute',
-    mdl_s2  = 'Fit',
-    make_s3 = 'Impute',
-    mdl_s3  = 'Fit'
-  )
 
 ```
 
@@ -193,19 +110,6 @@ knitr::include_graphics('../diagrams/workflow_ML.png')
 
 ```
 
-```{r, out.width='100%', fig.cap='A traditional workflow for cross-validation that applies imputation within each replicate (\\ie \\cvi).\\label{fig:workflow_cvi}'}
-
-knitr::include_graphics('../diagrams/workflow_CVI.png')
-
-```
-
-```{r, out.width='100%', fig.cap='An experimental workflow for cross-validation that applies unsupervised imputation prior to data splitting (\\ie \\icv).\\label{fig:workflow_cvi}'}
-
-knitr::include_graphics('../diagrams/workflow_ICV.png')
-
-```
-
-
 <!-- % P4 workflow for engaging with missing data in predictive modeling -->
 <!-- %  1. workflow, diagram ** move to order of ops -->
 <!-- %  2. other methods, like missingness incorporated as an attribute. -->
@@ -226,9 +130,15 @@ When employing supervised learning methods with split-sample-validation or cross
 
 It is not unusual to separate training and validation data before performing even unsupervised preprocessing steps. For example, in many supervised learning frameworks, it is common to center and scale features, such that they are mean $0$, variance $1$ before engaging with the outcome. As this does not involve the outcome, it is entirely unsupervised. Nonetheless to most accurately replicate the "fitting process" in each replicate of CV, it is common to learn the centering and scaling parameters for each feature in each training subset, and apply those parameters to center/scale features in the corresponding validation subset (CITE).
 
-```{r, out.width='100%', fig.cap='The workflow for \\cvi (\\ie traditional cross-validation).\\label{fig:workflow_cvi}'}
+```{r, out.width='100%', fig.cap='A traditional workflow for cross-validation that applies imputation within each replicate (\\ie \\cvi).\\label{fig:workflow_cvi}'}
 
 knitr::include_graphics('../diagrams/workflow_CVI.png')
+
+```
+
+```{r, out.width='100%', fig.cap='An experimental workflow for cross-validation that applies unsupervised imputation prior to data splitting (\\ie \\icv).\\label{fig:workflow_cvi}'}
+
+knitr::include_graphics('../diagrams/workflow_ICV.png')
 
 ```
 
@@ -350,35 +260,58 @@ cv_diffs_s2_5000 <- filter(cv_diffs, nobs == 5000, scenario == 's2')
 
 ```
 
-Overall, a total of `r sim_desc$observed` out of `r sim_desc$expected` (`r sim_desc$converged`) simulation replicates were completed. Incomplete replicates were not analyzed, as these were replicates where at least one of the amputation, imputation, or prediction models did not converge. Across all scenarios, the mean external $R^2$ ranged from was `r r2_ext_min` to `r r2_ext_max` (\textbf{Table} \ref{tbl:external_rsq}). As one may expect, external $R^2$ values were positively correlated with training sample size and signal-to-noise ratio. Notably, the mean external $R^2$ values in scenario 1 were uniformly greater than corresponding mean external $R^2$ values in scenarios 2 and 3, and the mean external $R^2$ values from scenario 2 were very similar to those from scenario 3 (max difference in mean external $R^2$: `r r2_ext_diff23`). For scenario 1 (aggregating results from MAR and MCAR as well as variants upon the signal-to-noise ratio), the mean absolute difference between \icv\space and \cvi\space in external $R^2$ estimates progressed from to `r cv_diffs_s1_100$mn` ($n = 100$) to `r cv_diffs_s1_5000$mn` ($n = 5000$; \textbf{Table} \ref{tbl:cv_diffs}). Results followed a similar progression in scenario 3. In contrast, for scenario 2, the mean absolute difference between \icv\space and \cvi\space in external $R^2$ estimates remained high (`r cv_diffs_s2_5000$mn`) with $n = 5000$. 
+Overall, a total of `r sim_desc$observed` out of `r sim_desc$expected` (`r sim_desc$converged`) simulation replicates were completed. Incomplete replicates were not analyzed, as these were replicates where at least one of the amputation, imputation, or prediction models did not converge. Across all scenarios, the mean external $R^2$ ranged from was `r r2_ext_min` to `r r2_ext_max` (\textbf{Table} \ref{tab:ext_rsq}). As one may expect, external $R^2$ values were positively correlated with training sample size and the ratio of predictors to junk variables. Notably, the mean external $R^2$ values in scenario 1 were uniformly greater than corresponding mean external $R^2$ values in scenarios 2 and 3, and the mean external $R^2$ values from scenario 2 were very similar to those from scenario 3 (max difference in mean external $R^2$: `r r2_ext_diff23`). For scenario 1 (aggregating results from MAR and MCAR as well as variants upon the signal-to-noise ratio), the mean absolute difference between \icv\space and \cvi\space in external $R^2$ estimates progressed from to `r cv_diffs_s1_100$mn` ($n = 100$) to `r cv_diffs_s1_5000$mn` ($n = 5000$; \textbf{Table} \ref{tab:cv_diffs}). Results followed a similar progression in scenario 3. In contrast, for scenario 2, the mean absolute difference between \icv\space and \cvi\space in external $R^2$ estimates remained high (`r cv_diffs_s2_5000$mn`) with $n = 5000$. These patterns were also apparent in visual depictions of the external $R^2$ estimates for each value of $k$ neighbors that we evaluated (\textbf{Figure} \ref{fig:sim_r2}). 
+
+```{r, include = FALSE}
 
 
-\begin{table}
-\caption{True external $R^2$ values for the modeling technique that is internally assessed using \icv\space and \cvi.}
-\label{tbl:external_rsq}
-`r tbl_ex_rsq`
-\end{table}
+# rbs and std values were multiplied by 100 in an earlier analysis
+# this was done to make their tables look less tedious. 
+# To present results in the main text, I am dividing rbs and std
+# values by 100.  I do not think this will confuse reviewers b/c
+# the tables clearly point out that the values are scaled by 100,
+# whereas the text does not make any statement about scaling.
+# But maybe it will still confuse reviewers? Suggestions are welcome.
 
+rbs_smry <- sim_tbls$data_mse %>%
+  separate(key, into = c('scenario', 'miss_mech')) %>%
+  group_by(scenario) %>%
+  summarize(
+    mn_rbs_icv = mean(imp_cv_rbs) / 100,
+    mn_rbs_cvi = mean(cv_imp_rbs) / 100
+  )
 
-\begin{table}
-\caption{Mean absolute differences in estimates of external $R^2$ between \icv\space and \cvi.}
-\label{tbl:cv_diffs}
-`r tbl_abs_diff`
-\end{table}
+std_smry <- sim_tbls$data_mse %>%
+  separate(key, into = c('scenario', 'miss_mech')) %>%
+  group_by(scenario) %>%
+  summarize(
+    mn_std_icv = mean(imp_cv_std) / 100,
+    mn_std_cvi = mean(cv_imp_std) / 100
+  )
 
-`r sim_tbls$kbl_bias`
+within(rbs_smry, {
+  rbs_s1_icv <<- round(mn_rbs_icv[scenario == 's1'], 4)
+  rbs_s2_icv <<- round(mn_rbs_icv[scenario == 's2'], 4)
+  rbs_s3_icv <<- round(mn_rbs_icv[scenario == 's3'], 4)
+  rbs_s1_cvi <<- round(mn_rbs_cvi[scenario == 's1'], 4)
+  rbs_s2_cvi <<- round(mn_rbs_cvi[scenario == 's2'], 4)
+  rbs_s3_cvi <<- round(mn_rbs_cvi[scenario == 's3'], 4)
+})
 
-`r sim_tbls$kbl_vrnc`
+within(std_smry, {
+  std_s1_icv <<- round(mn_std_icv[scenario == 's1'], 3)
+  std_s2_icv <<- round(mn_std_icv[scenario == 's2'], 3)
+  std_s3_icv <<- round(mn_std_icv[scenario == 's3'], 3)
+  std_s1_cvi <<- round(mn_std_cvi[scenario == 's1'], 3)
+  std_s2_cvi <<- round(mn_std_cvi[scenario == 's2'], 3)
+  std_s3_cvi <<- round(mn_std_cvi[scenario == 's3'], 3)
+})
 
-`r sim_tbls$kbl_rmse`
-
-Sentence about bias and trends (\textbf{Figure} \ref{fig:sim_r2}).
-
-```{r, out.width='100%', fig.cap='External generalization error and internal estimates of generalization error using \\icv\\space and \\cvi \\label{fig:sim_r2}'}
-
-knitr::include_graphics('figs/sim_r2.png')
 
 ```
+
+
+For scenario 1, the overall bias (\ie aggregating over the 18 combinations of training sample size, predictor to junk ratios, and MD pattern) of $R^2$ estimates using \cvi\space was `r rbs_s1_cvi`, whereas the corresponding overall bias using \icv\space was `r rbs_s1_icv` (\textbf{Table} \ref{tab:bias}). In scenario 2, the bias of \cvi\space was `r rbs_s2_cvi` and the bias of \icv\space was `r rbs_s2_icv`. Similarly, in scenario 3, the biases of \cvi\space and \icv\space were `r rbs_s3_cvi` and `r rbs_s3_icv`, respectively. The overall standard deviation of $R^2$ estimates was higher for \cvi\space versus \icv\space in all three scenarios, but the difference was most pronounced in scenario 2 (`r std_s2_cvi` versus `r std_s2_icv`; \textbf{Table} \ref{tab:variance}).
 
 
 \section{Real data experiments} \label{sec:app}
@@ -394,3 +327,26 @@ knitr::include_graphics('figs/sim_r2.png')
 
 <!-- % P.. R package -->
 
+\FloatBarrier
+
+
+`r sim_tbls$tbl_ext_rsq`
+
+`r sim_tbls$tbl_cv_diffs`
+
+`r sim_tbls$tbl_bias`
+
+`r sim_tbls$tbl_var`
+
+`r sim_tbls$tbl_rmse`
+
+`r sim_tbls$tbl_cmp_time`
+
+
+```{r, out.width='100%', fig.cap='External generalization error and internal estimates of generalization error using \\icv\\space and \\cvi \\label{fig:sim_r2}'}
+
+knitr::include_graphics('figs/sim_r2.png')
+
+```
+
+\FloatBarrier
