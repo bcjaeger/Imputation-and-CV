@@ -32,22 +32,43 @@ mse_smry <- mse_values %>%
   pivot_wider(names_from = cv_strat, values_from = r2) %>%
   drop_na() %>% 
   group_by(key, nobs, ncov) %>% 
-  mutate(abs_diff = abs(cv_imp - imp_cv)) %>% 
-  summarise(
-    nrows = n(),
-    external_mn = mean(ex_dat),
-    external_sd = sd(ex_dat),
-    abs_diff_mn = mean(abs_diff),
-    abs_diff_sd = sd(abs_diff),
-    cv_imp_rbs  = 100 * mean(ex_dat - cv_imp),
-    imp_cv_rbs  = 100 * mean(ex_dat - imp_cv),
-    cv_imp_std  = 100 * sd(cv_imp),
-    imp_cv_std  = 100 * sd(imp_cv),
-    cv_imp_rmse = 100 * rmse_vec(ex_dat, cv_imp),
-    imp_cv_rmse = 100 * rmse_vec(ex_dat, imp_cv)
-  ) %>% 
-  ungroup()
+  mutate(abs_diff = abs(cv_imp - imp_cv)) 
 
+mse_overall <- mse_values %>% 
+  select(-rmse) %>% 
+  pivot_wider(names_from = cv_strat, values_from = r2) %>%
+  drop_na() %>% 
+  group_by(key) %>% 
+  mutate(abs_diff = abs(cv_imp - imp_cv))
+
+.f <- function(.x){
+  .x %>% 
+    summarise(
+      nrows = n(),
+      external_mn = mean(ex_dat),
+      external_sd = sd(ex_dat),
+      abs_diff_mn = mean(abs_diff),
+      abs_diff_sd = sd(abs_diff),
+      cv_imp_rbs  = 100 * mean(ex_dat - cv_imp),
+      imp_cv_rbs  = 100 * mean(ex_dat - imp_cv),
+      cv_imp_std  = 100 * sd(cv_imp),
+      imp_cv_std  = 100 * sd(imp_cv),
+      cv_imp_rmse = 100 * rmse_vec(ex_dat, cv_imp),
+      imp_cv_rmse = 100 * rmse_vec(ex_dat, imp_cv)
+    ) %>% 
+    ungroup()
+}
+
+mse_smry <- .f(mse_smry) %>% 
+  arrange(ncov, nobs) %>% 
+  mutate(nobs = as.character(nobs))
+
+null_string <- '---'
+
+mse_overall <- .f(mse_overall) %>% 
+  mutate(ncov = 'Overall', nobs = null_string)
+
+mse_smry <- bind_rows(mse_smry, mse_overall)
 
 # create tuning data ------------------------------------------------------
 
@@ -69,8 +90,22 @@ mse_tune_smry <- mse_tune %>%
     cv_imp_nbrs = round(median(cv_imp_nbrs)),
     imp_cv_r2 = 100 * mean(imp_cv_r2),
     imp_cv_nbrs = round(median(imp_cv_nbrs))
-  ) 
+  ) %>% 
+  ungroup() %>% 
+  arrange(ncov, nobs) %>% 
+  mutate(nobs = as.character(nobs))
 
+mse_tune_overall <- mse_tune %>% 
+  group_by(key) %>% 
+  summarise(
+    cv_imp_r2 = 100 * mean(cv_imp_r2),
+    cv_imp_nbrs = round(median(cv_imp_nbrs)),
+    imp_cv_r2 = 100 * mean(imp_cv_r2),
+    imp_cv_nbrs = round(median(imp_cv_nbrs))
+  ) %>% 
+  mutate(ncov = 'Overall', nobs = null_string)
+
+mse_tune_smry <- bind_rows(mse_tune_smry, mse_tune_overall)
 
 # create computational time data ------------------------------------------
 
@@ -78,7 +113,7 @@ cmp_times <- sim_full %>%
   select(-results) %>%
   unnest(compute_time)
 
-cmp_times_smry <- cmp_times %>%
+cmp_times_diffs <- cmp_times %>%
   mutate(time = time / 60) %>% 
   pivot_wider(values_from = time, names_from = cv_strat) %>% 
   mutate(
@@ -86,7 +121,9 @@ cmp_times_smry <- cmp_times %>%
     key = str_sub(key, 1, 2),
     diff_raw = abs(imp_cv - cv_imp),
     diff_rel = cv_imp / imp_cv
-  ) %>% 
+  ) 
+
+cmp_times_smry <- cmp_times_diffs %>% 
   group_by(key, nobs, ncov, action) %>% 
   summarize(
     diff_raw_mn = mean(diff_raw),
@@ -94,8 +131,22 @@ cmp_times_smry <- cmp_times %>%
     diff_rel_mn = mean(diff_rel),
     diff_rel_sd = sd(diff_rel)
   ) %>% 
-  ungroup()
+  ungroup() %>% 
+  arrange(ncov, nobs) %>% 
+  mutate(nobs = as.character(nobs))
 
+cmp_times_overall <- cmp_times_diffs %>% 
+  group_by(key, action) %>% 
+  summarize(
+    diff_raw_mn = mean(diff_raw),
+    diff_raw_sd = sd(diff_raw),
+    diff_rel_mn = mean(diff_rel),
+    diff_rel_sd = sd(diff_rel)
+  ) %>% 
+  ungroup() %>% 
+  mutate(ncov = 'Overall', nobs = null_string)
+
+cmp_times_smry <- bind_rows(cmp_times_smry, cmp_times_overall)
 
 # make some datasets to pass into kable function --------------------------
 
@@ -106,8 +157,7 @@ kbl_mse <- mse_smry %>%
       100 * pointErr(external_mn, external_sd, style = 'brac')
     )
   ) %>% 
-  pivot_wider(names_from = key, values_from = external) %>% 
-  arrange(ncov, nobs)
+  pivot_wider(names_from = key, values_from = external) 
 
 kbl_cv_diffs <- mse_smry %>% 
   transmute(
