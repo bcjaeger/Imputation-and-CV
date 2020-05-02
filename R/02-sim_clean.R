@@ -48,6 +48,7 @@ data_out <- data_full %>%
     scenario = recode(
       scenario, 
       'noGroups'         = 's1', 
+      'noGroup'          = 's1',
       'wGroups_observed' = 's2', 
       'wGroups_latent'   = 's3'
     ),
@@ -73,13 +74,20 @@ sim_prop_converged_perc <- sim_prop_converged %>%
   round(digits = 2) %>% 
   paste0('%')
 
+total_time <- data_out %>% 
+  select(compute_time) %>% 
+  unnest(compute_time) %>% 
+  summarize(seconds = sum(time)) %>% 
+  pluck('seconds') %>% 
+  magrittr::divide_by(60 * 60) # seconds to hours 
+
 sim_desc <- list(
   expected = format(sim_count_expected, big.mark = ','),
   observed = format(sim_count_observed, big.mark = ','),
-  converged = sim_prop_converged_perc
+  converged = sim_prop_converged_perc,
+  total_hours = total_time
 )
 
-print(sim_desc)
 
 write_rds(sim_desc, 'results/02-sim_descriptives.rds')
 

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6930 64-bit) (preloaded format=pdflatex 2019.1.20)  29 APR 2020 15:56
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6930 64-bit) (preloaded format=pdflatex 2019.1.20)  1 MAY 2020 20:45
 entering extended mode
 **./SIM_Article.tex
 (SIM_Article.tex
@@ -1159,43 +1159,43 @@ File: ../diagrams/workflow_ML.png Graphic file (type png)
 Package pdftex.def Info: ../diagrams/workflow_ML.png  used on input line 223.
 (pdftex.def)             Requested size: 507.50787pt x 298.15858pt.
 [4 <../diagrams/workflow_ML.png>]
-<../diagrams/workflow_CVI.png, id=46, 570.4512pt x 412.1799pt>
+<../diagrams/workflow_CVI.png, id=46, 542.2659pt x 289.08pt>
 File: ../diagrams/workflow_CVI.png Graphic file (type png)
 <use ../diagrams/workflow_CVI.png>
 Package pdftex.def Info: ../diagrams/workflow_CVI.png  used on input line 254.
-(pdftex.def)             Requested size: 507.50787pt x 366.70686pt.
-<../diagrams/workflow_ICV.png, id=47, 548.5293pt x 398.6895pt>
+(pdftex.def)             Requested size: 507.50787pt x 270.5575pt.
+<../diagrams/workflow_ICV.png, id=47, 542.2659pt x 289.08pt>
 File: ../diagrams/workflow_ICV.png Graphic file (type png)
 <use ../diagrams/workflow_ICV.png>
 Package pdftex.def Info: ../diagrams/workflow_ICV.png  used on input line 258.
-(pdftex.def)             Requested size: 507.50787pt x 368.89151pt.
+(pdftex.def)             Requested size: 507.50787pt x 270.5575pt.
 LaTeX Font Info:    Font shape `T1/stix/bx/n' in size <12> not available
 (Font)              Font shape `T1/stix/b/n' tried instead on input line 261.
-[5] [6 <../diagrams/workflow_CVI.png>] [7 <../diagrams/workflow_ICV.png>]
-<figs/sim_r2.png, id=76, 469.755pt x 433.62pt>
+[5 <../diagrams/workflow_CVI.png>] [6 <../diagrams/workflow_ICV.png>] [7]
+<figs/sim_r2.png, id=81, 469.755pt x 433.62pt>
 File: figs/sim_r2.png Graphic file (type png)
 <use figs/sim_r2.png>
-Package pdftex.def Info: figs/sim_r2.png  used on input line 589.
+Package pdftex.def Info: figs/sim_r2.png  used on input line 635.
 (pdftex.def)             Requested size: 507.50787pt x 468.46803pt.
 [8] [9] [10] [11] [12 <./figs/sim_r2.png>] (SIM_Article.bbl)
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 597.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 643.
 [13
 
 ]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 597.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 643.
 (SIM_Article.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 597.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 597.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 643.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 643.
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 597.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 643.
  ) 
 Here is how much of TeX's memory you used:
- 14715 strings out of 492946
- 210621 string characters out of 3124934
- 365319 words of memory out of 3000000
- 18297 multiletter control sequences out of 15000+200000
+ 14718 strings out of 492946
+ 210656 string characters out of 3124934
+ 376487 words of memory out of 3000000
+ 18299 multiletter control sequences out of 15000+200000
  97281 words of font info for 120 fonts, out of 3000000 for 9000
  1167 hyphenation exceptions out of 8191
  43i,12n,40p,573b,381s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -1209,9 +1209,9 @@ r/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/stix/STIXGeneral-Regular
 ix/stix-mathit.pfb><C:/Users/bcjaeger/AppData/Local/Programs/MiKTeX 2.9/fonts/t
 ype1/public/stix/stix-mathrm.pfb><C:/Users/bcjaeger/AppData/Local/Programs/MiKT
 eX 2.9/fonts/type1/public/stix/stix-mathsf.pfb>
-Output written on SIM_Article.pdf (13 pages, 725220 bytes).
+Output written on SIM_Article.pdf (13 pages, 691296 bytes).
 PDF statistics:
- 190 PDF objects out of 1000 (max. 8388607)
- 37 named destinations out of 1000 (max. 500000)
+ 192 PDF objects out of 1000 (max. 8388607)
+ 38 named destinations out of 1000 (max. 500000)
  109 words of extra memory for PDF output out of 10000 (max. 10000000)
 

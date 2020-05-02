@@ -9,6 +9,7 @@ library(kableExtra)
 
 sim_full <- read_rds('results/02-sim_clean.rds') 
 
+
 # general footnote for tables
 mse_source_note <- 'All values are scaled by 100 for convenience'
 
@@ -46,6 +47,30 @@ mse_smry <- mse_values %>%
     imp_cv_rmse = 100 * rmse_vec(ex_dat, imp_cv)
   ) %>% 
   ungroup()
+
+
+# create tuning data ------------------------------------------------------
+
+mse_tune <- mse_values %>%
+  select(-rmse) %>% 
+  pivot_wider(values_from = r2, names_from = cv_strat) %>% 
+  group_by(seed, key, ncov, nobs) %>% 
+  summarise(
+    cv_imp_nbrs = neighbors[which.max(cv_imp)],
+    cv_imp_r2 = ex_dat[which.max(cv_imp)],
+    imp_cv_nbrs = neighbors[which.max(imp_cv)],
+    imp_cv_r2 = ex_dat[which.max(imp_cv)]
+  )
+
+mse_tune_smry <- mse_tune %>% 
+  group_by(key, nobs, ncov) %>% 
+  summarise(
+    cv_imp_r2 = 100 * mean(cv_imp_r2),
+    cv_imp_nbrs = round(median(cv_imp_nbrs)),
+    imp_cv_r2 = 100 * mean(imp_cv_r2),
+    imp_cv_nbrs = round(median(imp_cv_nbrs))
+  ) 
+
 
 # create computational time data ------------------------------------------
 
@@ -101,7 +126,7 @@ kbl_df_cmp <- cmp_times_smry %>%
   pivot_wider(names_from = c(action, key), values_from = diff_rel)  %>% 
   arrange(ncov, nobs)
 
-# a function for tabulating with kable ------------------------------------
+# functions for tabulating with kable -------------------------------------
 
 tabulate_pointErrs <- function(data, format = 'latex', 
   h1_label, caption, label){
@@ -138,7 +163,13 @@ tabulate_pointErrs <- function(data, format = 'latex',
   
 }
 
-tabulate_errors <- function(data, type, format = 'latex', caption, label){
+tabulate_errors <- function(
+  data,
+  type,
+  format = 'latex',
+  caption,
+  label,
+  needs_rounding = TRUE) {
   
   kbl_df <- data %>% 
     select(key, nobs, ncov, ends_with(type)) %>% 
@@ -181,9 +212,14 @@ tabulate_errors <- function(data, type, format = 'latex', caption, label){
   
   align <- c(align_L, align_C)
   
-  kbl_df %>%
-    select(-ncov) %>% 
-    mutate_at(vars(contains('..')), tbv_round) %>% 
+  out_df <- select(kbl_df, -ncov)
+  
+  if(needs_rounding){
+    out_df <- out_df %>% 
+      mutate_at(vars(contains('..')), tbv_round)
+  }
+  
+   out_df %>% 
     kable(format = format, col.names = cnames, booktabs = TRUE,
       align = align, caption = caption, label = label, escape = FALSE) %>% 
     kable_styling() %>% 
@@ -207,6 +243,7 @@ tbl_ext_rsq <- tabulate_pointErrs(
   caption = 'True external $R^2$ values for the modeling technique that is internally assessed using \\cvi\\space and \\icv.', 
   label = 'ext_rsq'
 )
+
 
 # absolute cv diffs table -------------------------------------------------
 
@@ -243,20 +280,29 @@ tbl_var <- tabulate_errors(mse_smry, type = 'std',
 # rmse table --------------------------------------------------------------
 
 tbl_rmse <- tabulate_errors(mse_smry, type = 'rmse', 
-  caption = 'Root-mean-squared error of external $R^2$ estimates using \\icv and \\cvi', 
+  caption = 'Root-mean-squared error of external $R^2$ estimates using \\cvi\\space and \\icv', 
   label = 'rmse')
+
+
+# tuning table ------------------------------------------------------------
+
+tbl_tune <- tabulate_errors(mse_tune_smry, type = 'r2', 
+  caption = 'Mean external $R^2$ when \\cvi\\space and \\icv\\space were applied to tune the number of neighbors used for imputation.' , 
+  label = 'tune')
 
 
 # combine and save outputs ------------------------------------------------
 
 list(
   data_mse = mse_smry,
+  data_tune = mse_tune_smry,
   data_cmp = cmp_times_smry,
   tbl_ext_rsq = tbl_ext_rsq,
   tbl_cv_diffs = tbl_cv_diffs,
   tbl_cmp_time = tbl_cmp_time,
   tbl_bias = tbl_bias,
   tbl_var = tbl_var,
-  tbl_rmse = tbl_rmse
+  tbl_rmse = tbl_rmse,
+  tbl_tune = tbl_tune
 ) %>% 
   write_rds('results/03-sim_tabulate.rds')

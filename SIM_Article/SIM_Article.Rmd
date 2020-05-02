@@ -260,7 +260,7 @@ cv_diffs_s2_5000 <- filter(cv_diffs, nobs == 5000, scenario == 's2')
 
 ```
 
-Overall, a total of `r sim_desc$observed` out of `r sim_desc$expected` (`r sim_desc$converged`) simulation replicates were completed. Incomplete replicates were not analyzed, as these were replicates where at least one of the amputation, imputation, or prediction models did not converge. Across all scenarios, the mean external $R^2$ ranged from was `r r2_ext_min` to `r r2_ext_max` (\textbf{Table} \ref{tab:ext_rsq}). As one may expect, external $R^2$ values were positively correlated with training sample size and the ratio of predictors to junk variables. Notably, the mean external $R^2$ values in scenario 1 were uniformly greater than corresponding mean external $R^2$ values in scenarios 2 and 3, and the mean external $R^2$ values from scenario 2 were very similar to those from scenario 3 (max difference in mean external $R^2$: `r r2_ext_diff23`). For scenario 1 (aggregating results from MAR and MCAR as well as variants upon the signal-to-noise ratio), the mean absolute difference between \icv\space and \cvi\space in external $R^2$ estimates progressed from to `r cv_diffs_s1_100$mn` ($n = 100$) to `r cv_diffs_s1_5000$mn` ($n = 5000$; \textbf{Table} \ref{tab:cv_diffs}). Results followed a similar progression in scenario 3. In contrast, for scenario 2, the mean absolute difference between \icv\space and \cvi\space in external $R^2$ estimates remained high (`r cv_diffs_s2_5000$mn`) with $n = 5000$. These patterns were also apparent in visual depictions of the external $R^2$ estimates for each value of $k$ neighbors that we evaluated (\textbf{Figure} \ref{fig:sim_r2}). 
+Overall, a total of `r sim_desc$observed` out of `r sim_desc$expected` (`r sim_desc$converged`) simulation replicates were completed. Incomplete replicates were not analyzed, as these were replicates where at least one of the amputation, imputation, or prediction models did not converge. Across all scenarios, the mean external $R^2$ ranged from was `r r2_ext_min` to `r r2_ext_max` (\textbf{Table} \ref{tab:ext_rsq}). As one may expect, external $R^2$ values were positively correlated with training sample size and the ratio of predictors to junk variables. Notably, the mean external $R^2$ values in scenario 1 were uniformly greater than corresponding mean external $R^2$ values in scenarios 2 and 3, and the mean external $R^2$ values from scenario 2 were very similar to those from scenario 3 (max difference in mean external $R^2$: `r r2_ext_diff23`). For scenario 1, the mean absolute difference for specific training sample sizes (\ie aggregating results over the 6 combinations of predictor to junk ratios and MD pattern) between \icv\space and \cvi\space in external $R^2$ estimates progressed from to `r cv_diffs_s1_100$mn` ($N = 100$) to `r cv_diffs_s1_5000$mn` ($N = 5000$; \textbf{Table} \ref{tab:cv_diffs}). Results followed a similar progression in scenario 3. In contrast, for scenario 2, the mean absolute difference between \icv\space and \cvi\space in external $R^2$ estimates remained high (`r cv_diffs_s2_5000$mn`) with $N = 5000$. These patterns were also apparent in visual depictions of the external $R^2$ estimates for each value of $k$ neighbors that we evaluated (\textbf{Figure} \ref{fig:sim_r2}). 
 
 ```{r, include = FALSE}
 
@@ -289,13 +289,21 @@ std_smry <- sim_tbls$data_mse %>%
     mn_std_cvi = mean(cv_imp_std) / 100
   )
 
+rmse_smry <- sim_tbls$data_mse %>%
+  separate(key, into = c('scenario', 'miss_mech')) %>%
+  group_by(scenario) %>%
+  summarize(
+    mn_rmse_icv = mean(imp_cv_rmse) / 100,
+    mn_rmse_cvi = mean(cv_imp_rmse) / 100
+  )
+
 within(rbs_smry, {
-  rbs_s1_icv <<- round(mn_rbs_icv[scenario == 's1'], 4)
-  rbs_s2_icv <<- round(mn_rbs_icv[scenario == 's2'], 4)
-  rbs_s3_icv <<- round(mn_rbs_icv[scenario == 's3'], 4)
-  rbs_s1_cvi <<- round(mn_rbs_cvi[scenario == 's1'], 4)
-  rbs_s2_cvi <<- round(mn_rbs_cvi[scenario == 's2'], 4)
-  rbs_s3_cvi <<- round(mn_rbs_cvi[scenario == 's3'], 4)
+  rbs_s1_icv <<- round(mn_rbs_icv[scenario == 's1'], 3)
+  rbs_s2_icv <<- round(mn_rbs_icv[scenario == 's2'], 3)
+  rbs_s3_icv <<- round(mn_rbs_icv[scenario == 's3'], 3)
+  rbs_s1_cvi <<- round(mn_rbs_cvi[scenario == 's1'], 3)
+  rbs_s2_cvi <<- round(mn_rbs_cvi[scenario == 's2'], 3)
+  rbs_s3_cvi <<- round(mn_rbs_cvi[scenario == 's3'], 3)
 })
 
 within(std_smry, {
@@ -307,11 +315,19 @@ within(std_smry, {
   std_s3_cvi <<- round(mn_std_cvi[scenario == 's3'], 3)
 })
 
+within(rmse_smry, {
+  rmse_s1_icv <<- round(mn_rmse_icv[scenario == 's1'], 4)
+  rmse_s2_icv <<- round(mn_rmse_icv[scenario == 's2'], 4)
+  rmse_s3_icv <<- round(mn_rmse_icv[scenario == 's3'], 4)
+  rmse_s1_cvi <<- round(mn_rmse_cvi[scenario == 's1'], 4)
+  rmse_s2_cvi <<- round(mn_rmse_cvi[scenario == 's2'], 4)
+  rmse_s3_cvi <<- round(mn_rmse_cvi[scenario == 's3'], 4)
+})
 
 ```
 
 
-For scenario 1, the overall bias (\ie aggregating over the 18 combinations of training sample size, predictor to junk ratios, and MD pattern) of $R^2$ estimates using \cvi\space was `r rbs_s1_cvi`, whereas the corresponding overall bias using \icv\space was `r rbs_s1_icv` (\textbf{Table} \ref{tab:bias}). In scenario 2, the bias of \cvi\space was `r rbs_s2_cvi` and the bias of \icv\space was `r rbs_s2_icv`. Similarly, in scenario 3, the biases of \cvi\space and \icv\space were `r rbs_s3_cvi` and `r rbs_s3_icv`, respectively. The overall standard deviation of $R^2$ estimates was higher for \cvi\space versus \icv\space in all three scenarios, but the difference was most pronounced in scenario 2 (`r std_s2_cvi` versus `r std_s2_icv`; \textbf{Table} \ref{tab:variance}).
+For scenario 1, the overall bias (\ie aggregating over the 18 combinations of training sample size, predictor to junk ratios, and MD pattern) of $R^2$ estimates using \cvi\space was `r rbs_s1_cvi`, whereas the corresponding overall bias using \icv\space was `r rbs_s1_icv` (\textbf{Table} \ref{tab:bias}). In scenario 2, the bias of \cvi\space was `r rbs_s2_cvi` and the bias of \icv\space was `r rbs_s2_icv`. Similarly, in scenario 3, the biases of \cvi\space and \icv\space were `r rbs_s3_cvi` and `r rbs_s3_icv`, respectively. The overall standard deviation of $R^2$ estimates was higher for \cvi\space versus \icv\space in all three scenarios, but the difference was most pronounced in scenario 2 (`r std_s2_cvi` versus `r std_s2_icv`; \textbf{Table} \ref{tab:variance}). A remarkable result is that, despite its bias, the lower variance of \icv\space compared to \cvi\space in scenario 2 leads to a lower overall root-mean-squared error of external $R^2$ estimates for \icv\space versus \cvi\space (`r rmse_s2_icv` versus `r rmse_s2_cvi`; \textbf{Table} \ref{tab:rmse}).    
 
 
 \section{Real data experiments} \label{sec:app}
@@ -342,6 +358,7 @@ For scenario 1, the overall bias (\ie aggregating over the 18 combinations of tr
 
 `r sim_tbls$tbl_cmp_time`
 
+`r sim_tbls$tbl_tune`
 
 ```{r, out.width='100%', fig.cap='External generalization error and internal estimates of generalization error using \\icv\\space and \\cvi \\label{fig:sim_r2}'}
 
