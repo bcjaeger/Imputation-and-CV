@@ -62,6 +62,8 @@ data_out <- data_full %>%
   unite(scenario, miss_mech, col = 'key') %>% 
   select(key, seeds, seed, ncov, nobs, compute_time, results)
 
+sim_validation_size <- data_full$files[[1]]$n_val
+sim_nfolds <- data_full$files[[1]]$nfold
 
 sim_count_expected <- length(directories) * 6000
 sim_count_observed <- nrow(data_out)
@@ -74,7 +76,11 @@ sim_prop_converged_perc <- sim_prop_converged %>%
   round(digits = 2) %>% 
   paste0('%')
 
-total_time <- data_out %>% 
+sim_total_scenarios <- data_out %>% 
+  distinct(key, ncov, nobs) %>% 
+  nrow()
+
+sim_total_time <- data_out %>% 
   select(compute_time) %>% 
   unnest(compute_time) %>% 
   summarize(seconds = sum(time)) %>% 
@@ -82,10 +88,13 @@ total_time <- data_out %>%
   magrittr::divide_by(60 * 60) # seconds to hours 
 
 sim_desc <- list(
+  validation_size = sim_validation_size,
+  nfolds = sim_nfolds,
   expected = format(sim_count_expected, big.mark = ','),
   observed = format(sim_count_observed, big.mark = ','),
   converged = sim_prop_converged_perc,
-  total_hours = total_time
+  total_scenarios = sim_total_scenarios,
+  total_hours = sim_total_time
 )
 
 

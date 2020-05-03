@@ -235,8 +235,7 @@ tabulate_errors <- function(
       ends_with('s1_mar'),
       ends_with('s2_mar'), 
       ends_with('s3_mar')
-    ) %>% 
-    arrange(ncov, nobs)
+    ) 
   
   rowpack_index <- table(kbl_df$ncov)
   

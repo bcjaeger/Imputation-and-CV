@@ -182,20 +182,8 @@ knitr::include_graphics('../diagrams/workflow_ICV.png')
 <!-- % note the imputation model: knn  -->
 <!-- % NOTE FOR SIMS: update alpha to be 0.90 -->
 
-Due in part to the plurality of methods used for prediction modeling and resampling, it is difficult to obtain meaningful theoretical results related to \icv\space and \cvi. The goal of this section is to assess empirical findings comparing these two strategies. Our primary goal is to measure and compare how well each strategy approximates a model's generalization error. A secondary goal is to monitor the computation time of each approach and conduct relative comparisons. For these empirical experiments, we vary multiple parameters that may impact results, including the number of potential predictor variables, the number of training observations, and the missing mechanism (MCAR or MAR). As the difference between \icv\space and \cvi\space grows negligible when there are few missing data, we focus our comparisons to settings where 90\% of observations contain at least 1 missing value and 30-50\% of the data are missing. We apply nearest-neighbor imputation to handle MD and least absolute shrinkage and selection operator (LASSO) regression to develop prediction functions throughout the simulated experiments since these methods are widely recommended and used in applied settings. To generate data that matched the structure of our modeling procedure, we generated outcomes using linear effects without interaction. To be comprehensive, a separate appendix investigates the same simulation study where random forests
 
-In addition to varying parameters in the data-generation process, we also consider three general data-generation scenarios. In scenario 1, the observed data are independent and identically distributed (iid). In scenario 2, the data are iid conditional on an observed grouping variable. A total of 11 groups are formed, one in the validation set and the remaining 10 in the training set. Each group is characterized by a unique mean value for predictor variables. During CV, the observed groups are separated into ten folds to mimic the prediction of outcomes in a population with different characteristics. Scenario 3 is identical to scenario 2 in all regards except that the grouping variable is latent. Consequently, CV does not break the observed groups into separate folds for scenario 3. Scenario 1 is an idealistic setting where \icv\space and \cvi\space should provide almost identical estimates of generalization error. Scenarios 2 and 3 are meant to test whether \icv\space produces biased estimates of generalization error by omitting imputation from the CV process. In these scenarios, it is theoretically clear that \cvi\space is more appropriate, but the degree to which \icv\space is inappropriate has not yet been quantified and may be negligible in larger samples. 
-
-<!-- % include these in a table? -->
-<!-- % 3 different observations: 100, 500, 1000 -->
-<!-- % 3 different covariates: 10_10, 10_40, 10_490 -->
-<!-- % 3 scenarios for generating data (iid, clinical sites, latent clinical sites) -->
-<!-- % 2 different missing data mechanisms -->
-<!-- % 54 -->
-
-<!-- % First table showing mean generalization R^2 for external (6 cols) -->
-
-
+Due in part to the plurality of methods used for prediction modeling and resampling, it is difficult to obtain meaningful theoretical results related to \icv\space and \cvi. The goal of this section is to assess empirical findings comparing these two strategies. Our primary goal is to measure and compare how well each strategy approximates a model's generalization error. A secondary goal is to monitor the computation time of each approach and conduct relative comparisons. As the difference between \icv\space and \cvi\space grows negligible when there are few missing data, we focus our comparisons to settings where 90\% of observations contain at least 1 missing value and 30-50\% of the data are missing. We apply nearest-neighbor imputation to handle MD and least absolute shrinkage and selection operator (LASSO) regression to develop prediction functions throughout the simulated experiments. We selected these methods because they have been studied thoroughly and are widely used in applied settings. To generate data that matched the structure of our modeling procedure, we generated outcomes using linear effects without interaction.
 
  <!-- P2 describe data generation and three simulation scenarios -->
  <!-- - all effects were linear, no interactions -->
@@ -207,13 +195,16 @@ In addition to varying parameters in the data-generation process, we also consid
  <!-- 2. batch setting: groups are observed and cross-validation is performed using leave one group out. Example: combining data from multiple studies -->
  <!-- make sure to describe how we generate batches  -->
  <!-- 3. batch setting with unobserved groups. -->
- 
+
+In this simulation study, three general data-generation scenarios are explored. In scenario 1, the observed data are independent and identically distributed (iid). In scenario 2, the data are iid conditional on an observed grouping variable. A total of 11 groups are formed, one in the validation set and the remaining 10 in the training set. Each group is characterized by a unique mean value for predictor variables. During CV, the observed groups are separated into ten folds to mimic the prediction of outcomes in a population with different characteristics. Scenario 3 is identical to scenario 2 in all regards except that the grouping variable is latent. Consequently, CV does not break the observed groups into separate folds for scenario 3. Scenario 1 is an idealistic setting where \icv\space and \cvi\space should provide almost identical estimates of generalization error. Scenarios 2 and 3 are meant to test whether \icv\space produces biased estimates of generalization error by omitting imputation from the CV process. 
 
  <!-- P3 how we generated missingness -->
  <!-- - missingness was either mcar / mar, ampute function in mice -->
  <!-- - briefly describe ampute function -->
  <!--   - note that missingness was done by case (90%) -->
  <!--   - this translates to about 40% missing data overall -->
+
+
 
 <!-- P4 TABLE RECIPES
  1 table for each of these 
@@ -224,9 +215,13 @@ In addition to varying parameters in the data-generation process, we also consid
  P5 results (pulling some facts from tables) 
 -->
 
+In this simulation study, we vary the scenario (1, 2, or 3; described in a preceding paragraph), missing mechanism (MCAR or MAR), ratio of predictor variables to junk variables (1:1, 1:4, and 1:49), and the number of training observations ($N$ = 100, 500, 1,000, 5,000). We present results for each of `r sim_desc$total_scenarios` scenarios determined by these parameters and also provide overall summary statistics for scenarios 1, 2, and 3 when data are MCAR and MAR. In each simulation replication, we computed the true external $R^2$ in a validation set comprising `r format(sim_desc$validation_size, big.mark =',')` when $k \in \lbrace 1, 2, \ldots, 35 \rbrace$ nearest neighbors were used to impute missing values. We also computed the estimated external $R^2$ for these values of $k$ using \cvi\space and \icv, separately. We assessed the difference between estimated $R^2$ according to \cvi\space and \icv\space as well as the bias, variance, and root-mean-squared error (RMSE) of these estimates. The RMSE provides an overall assessment of estimation accuracy that depends on both bias and variance. Last, we investigated the accuracy of downstream models when \cvi\space and \icv\space were applied to select the number of neighbors to use for imputation and the regularization parameter for a penalized regression model.
+
+ 
 \subsection{Results} \label{subsec:sim_results}
 
-```{r}
+```{r, include = FALSE}
+
 
 r2_ext_range <- sim_tbls$data_mse %>%
   summarize(min = min(external_mn), max = max(external_mn)) %>% 
@@ -243,28 +238,6 @@ r2_ext_diff23 <- sim_tbls$data_mse %>%
   mutate(value = format(round(value, 3), digits = 3)) %>% 
   pull(value)
 
-cv_diffs <- sim_tbls$data_mse %>% 
-  separate(key, into = c('scenario', 'miss_mech'), sep = '_') %>% 
-  select(scenario, nobs, ncov, abs_diff_mn, abs_diff_sd) %>% 
-  group_by(scenario, nobs) %>% 
-  summarize(mn = mean(abs_diff_mn)) %>% 
-  mutate(mn = format(round(mn, digits = 5), nsmall = 5))
-
-
-cv_diffs_s1_100 <- filter(cv_diffs, nobs == 100, scenario == 's1')
-cv_diffs_s1_5000 <- filter(cv_diffs, nobs == 5000, scenario == 's1')
-
-cv_diffs_s2_100 <- filter(cv_diffs, nobs == 100, scenario == 's2')
-cv_diffs_s2_5000 <- filter(cv_diffs, nobs == 5000, scenario == 's2')
-
-
-```
-
-Overall, a total of `r sim_desc$observed` out of `r sim_desc$expected` (`r sim_desc$converged`) simulation replicates were completed. Incomplete replicates were not analyzed, as these were replicates where at least one of the amputation, imputation, or prediction models did not converge. Across all scenarios, the mean external $R^2$ ranged from was `r r2_ext_min` to `r r2_ext_max` (\textbf{Table} \ref{tab:ext_rsq}). As one may expect, external $R^2$ values were positively correlated with training sample size and the ratio of predictors to junk variables. Notably, the mean external $R^2$ values in scenario 1 were uniformly greater than corresponding mean external $R^2$ values in scenarios 2 and 3, and the mean external $R^2$ values from scenario 2 were very similar to those from scenario 3 (max difference in mean external $R^2$: `r r2_ext_diff23`). For scenario 1, the mean absolute difference for specific training sample sizes (\ie aggregating results over the 6 combinations of predictor to junk ratios and MD pattern) between \icv\space and \cvi\space in external $R^2$ estimates progressed from to `r cv_diffs_s1_100$mn` ($N = 100$) to `r cv_diffs_s1_5000$mn` ($N = 5000$; \textbf{Table} \ref{tab:cv_diffs}). Results followed a similar progression in scenario 3. In contrast, for scenario 2, the mean absolute difference between \icv\space and \cvi\space in external $R^2$ estimates remained high (`r cv_diffs_s2_5000$mn`) with $N = 5000$. These patterns were also apparent in visual depictions of the external $R^2$ estimates for each value of $k$ neighbors that we evaluated (\textbf{Figure} \ref{fig:sim_r2}). 
-
-```{r, include = FALSE}
-
-
 # rbs and std values were multiplied by 100 in an earlier analysis
 # this was done to make their tables look less tedious. 
 # To present results in the main text, I am dividing rbs and std
@@ -273,62 +246,80 @@ Overall, a total of `r sim_desc$observed` out of `r sim_desc$expected` (`r sim_d
 # whereas the text does not make any statement about scaling.
 # But maybe it will still confuse reviewers? Suggestions are welcome.
 
+
+puller <- function(data, .scenario, .miss_mech, .type){
+  filter(data, scenario == .scenario, miss_mech == .miss_mech) %>% 
+  select_at(vars(starts_with(.type))) %>% 
+  as.numeric() %>% 
+  round(5) %>% 
+  format(nsmall = 5)
+}
+
+pull_icv <- function(data, scenario, miss_mech){
+  puller(data, scenario, miss_mech, 'imp_cv')
+}
+
+pull_cvi <- function(data, scenario, miss_mech){
+  puller(data, scenario, miss_mech, 'cv_imp')
+}
+  
 rbs_smry <- sim_tbls$data_mse %>%
-  separate(key, into = c('scenario', 'miss_mech')) %>%
-  group_by(scenario) %>%
-  summarize(
-    mn_rbs_icv = mean(imp_cv_rbs) / 100,
-    mn_rbs_cvi = mean(cv_imp_rbs) / 100
-  )
+  filter(ncov == 'Overall') %>% 
+  select(key, ends_with('rbs')) %>% 
+  mutate_at(vars(ends_with('rbs')), ~.x/100) %>% 
+  separate(key, into = c('scenario', 'miss_mech')) 
 
 std_smry <- sim_tbls$data_mse %>%
-  separate(key, into = c('scenario', 'miss_mech')) %>%
-  group_by(scenario) %>%
-  summarize(
-    mn_std_icv = mean(imp_cv_std) / 100,
-    mn_std_cvi = mean(cv_imp_std) / 100
-  )
+  filter(ncov == 'Overall') %>% 
+  select(key, ends_with('std')) %>% 
+  mutate_at(vars(ends_with('std')), ~.x/100) %>% 
+  separate(key, into = c('scenario', 'miss_mech')) 
 
 rmse_smry <- sim_tbls$data_mse %>%
-  separate(key, into = c('scenario', 'miss_mech')) %>%
-  group_by(scenario) %>%
-  summarize(
-    mn_rmse_icv = mean(imp_cv_rmse) / 100,
-    mn_rmse_cvi = mean(cv_imp_rmse) / 100
-  )
+  filter(ncov == 'Overall') %>% 
+  select(key, ends_with('rmse')) %>% 
+  mutate_at(vars(ends_with('rmse')), ~.x/100) %>% 
+  separate(key, into = c('scenario', 'miss_mech')) 
 
-within(rbs_smry, {
-  rbs_s1_icv <<- round(mn_rbs_icv[scenario == 's1'], 3)
-  rbs_s2_icv <<- round(mn_rbs_icv[scenario == 's2'], 3)
-  rbs_s3_icv <<- round(mn_rbs_icv[scenario == 's3'], 3)
-  rbs_s1_cvi <<- round(mn_rbs_cvi[scenario == 's1'], 3)
-  rbs_s2_cvi <<- round(mn_rbs_cvi[scenario == 's2'], 3)
-  rbs_s3_cvi <<- round(mn_rbs_cvi[scenario == 's3'], 3)
-})
+tune_smry <- sim_tbls$data_tune %>%
+  filter(ncov == 'Overall') %>% 
+  select(key, ends_with('r2')) %>% 
+  mutate_at(vars(ends_with('r2')), ~.x/100) %>% 
+  separate(key, into = c('scenario', 'miss_mech')) %>% 
+  mutate(diff = abs(imp_cv_r2 - cv_imp_r2))
 
-within(std_smry, {
-  std_s1_icv <<- round(mn_std_icv[scenario == 's1'], 3)
-  std_s2_icv <<- round(mn_std_icv[scenario == 's2'], 3)
-  std_s3_icv <<- round(mn_std_icv[scenario == 's3'], 3)
-  std_s1_cvi <<- round(mn_std_cvi[scenario == 's1'], 3)
-  std_s2_cvi <<- round(mn_std_cvi[scenario == 's2'], 3)
-  std_s3_cvi <<- round(mn_std_cvi[scenario == 's3'], 3)
-})
+tune_biggest_diff <- tune_smry %>% 
+  arrange(desc(diff)) %>% 
+  slice(1) %>% 
+  select(scenario, miss_mech, diff) %>% 
+  mutate(scenario = recode(scenario, 's1' = 'scenario 1', 
+    's2' = 'scenario 2', 's3' = 'scenario 3'))
 
-within(rmse_smry, {
-  rmse_s1_icv <<- round(mn_rmse_icv[scenario == 's1'], 4)
-  rmse_s2_icv <<- round(mn_rmse_icv[scenario == 's2'], 4)
-  rmse_s3_icv <<- round(mn_rmse_icv[scenario == 's3'], 4)
-  rmse_s1_cvi <<- round(mn_rmse_cvi[scenario == 's1'], 4)
-  rmse_s2_cvi <<- round(mn_rmse_cvi[scenario == 's2'], 4)
-  rmse_s3_cvi <<- round(mn_rmse_cvi[scenario == 's3'], 4)
-})
+tune_smallest_diff <- tune_smry %>% 
+  arrange(desc(diff)) %>% 
+  slice(n()) %>% 
+  select(scenario, miss_mech, diff) %>% 
+  mutate(scenario = recode(scenario, 's1' = 'scenario 1', 
+    's2' = 'scenario 2', 's3' = 'scenario 3'))
+
+cvi_wins <- tune_smry %>% 
+  summarize(cvi_wins = sum(cv_imp_r2 > imp_cv_r2)) %>% 
+  as.numeric()
+
+
 
 ```
 
+Overall, a total of `r sim_desc$observed` out of `r sim_desc$expected` (`r sim_desc$converged`) simulation replicates were completed. Incomplete replicates were not analyzed, as these were replicates where at least one of the amputation, imputation, or prediction models did not converge. Across all scenarios, the mean external $R^2$ ranged from was `r r2_ext_min` to `r r2_ext_max` (\textbf{Table} \ref{tab:ext_rsq}). As one may expect, external $R^2$ values were positively correlated with training sample size and the ratio of predictors to junk variables. Notably, the mean external $R^2$ values in scenario 1 were uniformly greater than corresponding mean external $R^2$ values in scenarios 2 and 3, and the mean external $R^2$ values from scenario 2 were very similar to those from scenario 3 (max difference in mean external $R^2$: `r r2_ext_diff23`). 
 
-For scenario 1, the overall bias (\ie aggregating over the 18 combinations of training sample size, predictor to junk ratios, and MD pattern) of $R^2$ estimates using \cvi\space was `r rbs_s1_cvi`, whereas the corresponding overall bias using \icv\space was `r rbs_s1_icv` (\textbf{Table} \ref{tab:bias}). In scenario 2, the bias of \cvi\space was `r rbs_s2_cvi` and the bias of \icv\space was `r rbs_s2_icv`. Similarly, in scenario 3, the biases of \cvi\space and \icv\space were `r rbs_s3_cvi` and `r rbs_s3_icv`, respectively. The overall standard deviation of $R^2$ estimates was higher for \cvi\space versus \icv\space in all three scenarios, but the difference was most pronounced in scenario 2 (`r std_s2_cvi` versus `r std_s2_icv`; \textbf{Table} \ref{tab:variance}). A remarkable result is that, despite its bias, the lower variance of \icv\space compared to \cvi\space in scenario 2 leads to a lower overall root-mean-squared error of external $R^2$ estimates for \icv\space versus \cvi\space (`r rmse_s2_icv` versus `r rmse_s2_cvi`; \textbf{Table} \ref{tab:rmse}).    
+In all simulated settings, the mean absolute difference between external $R^2$ estimates using \cvi\space and \icv\space shrunk towards zero as the size of the training set increased (\textbf{Table} \ref{tab:cv_diffs}). The difference between \cvi\space and \icv\space was lowest in scenario 1 and greatest in scenario 2. These patterns were apparent in tabulated summary statistics based on aggregation of all potential values of $k$ neighbors (\ie 1, 2, \ldots, 35) as well as visual depictions of external$R^2$ that provide results for individual values of $k$ neighbors (\textbf{Figure} \ref{fig:sim_r2}). 
 
+
+For scenario 1, the overall bias (\ie aggregating over training set size, predictor to junk ratios, and MD pattern) of $R^2$ estimates under MCAR using \cvi\space was `r pull_icv(rbs_smry, 's1', 'mcar')` versus `r pull_cvi(rbs_smry, 's1', 'mcar')` using \icv\space (\textbf{Table} \ref{tab:bias}). When the data were MAR, the overall biases were `r pull_cvi(rbs_smry, 's1', 'mar')` (\cvi) versus `r pull_icv(rbs_smry, 's1', 'mar')` (\icv).  In scenarios 2 and 3, the bias of \cvi\space was lower than that of \icv\space, and \icv\space consistently provided overly optimistics error estimates. The overall standard deviation of $R^2$ estimates was higher for \cvi\space versus \icv\space in all three scenarios and both missing data mechanisms. The difference in standard deviation was most pronounced in scenario 3 when data were MCAR (`r pull_cvi(std_smry, 's3', 'mcar')` [\cvi] versus `r pull_icv(std_smry, 's3', 'mcar')` [\icv]; \textbf{Table} \ref{tab:variance}). 
+
+Despite the optimistic bias of \icv\space in scenario 2, the reduced variance of this approach lead to a lower overall RMSE for external $R^2$ compared to \cvi\space (\textbf{Table} \ref{tab:rmse}). When the data were MCAR in scenario 2, \cvi\space and \icv\space obtained RMSEs of `r pull_cvi(rmse_smry, 's2', 'mcar')` and `r pull_icv(rmse_smry, 's2', 'mcar')`, respectively. Similarly, when the data were MAR in scenario 2, overall RMSE values were `r pull_cvi(rmse_smry, 's2', 'mar')` and `r pull_icv(rmse_smry, 's2', 'mar')`. 
+
+When \cvi\space and \icv\space were applied to select tuning parameters, the overall mean external $R^2$ was higher using \cvi\space in `r cvi_wins` out of `r nrow(tune_smry)` comparisons (\textbf{Table} \ref{tab:tune}). The greatest overall difference in mean $R^2$ between downstream models occurred in `r tune_biggest_diff$scenario` when the data were `r toupper(tune_biggest_diff$miss_mech)` (absolute difference in model $R^2$: `r format(round(tune_biggest_diff$diff, 5), nsmall = 5)`). Notably, differences of this magnitude in external $R^2$ may be considered practically inconsequential. 
 
 \section{Real data experiments} \label{sec:app}
 
