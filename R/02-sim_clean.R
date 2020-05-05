@@ -87,6 +87,25 @@ sim_total_time <- data_out %>%
   pluck('seconds') %>% 
   magrittr::divide_by(60 * 60) # seconds to hours 
 
+sim_time_compare <- data_out %>% 
+  select(compute_time) %>% 
+  unnest(compute_time) %>% 
+  filter(action == 'make') %>% 
+  group_by(cv_strat) %>% 
+  summarize(time_minutes = mean(time) / 60) %>% 
+  mutate(
+    time_ratio = max(time_minutes) / min(time_minutes),
+    time_minutes = format(round(time_minutes, 2), nsmall = 2)
+  )
+
+sim_time_mdl <- data_out %>% 
+  select(compute_time) %>% 
+  unnest(compute_time) %>% 
+  filter(action == 'mdl', cv_strat == 'imp_cv') %>% 
+  summarise(time_minutes = mean(time) / 60) %>% 
+  mutate(time_minutes = format(round(time_minutes, 2), nsmall = 2)) %>% 
+  as.character()
+
 sim_desc <- list(
   validation_size = sim_validation_size,
   nfolds = sim_nfolds,
@@ -94,7 +113,9 @@ sim_desc <- list(
   observed = format(sim_count_observed, big.mark = ','),
   converged = sim_prop_converged_perc,
   total_scenarios = sim_total_scenarios,
-  total_hours = sim_total_time
+  total_hours = sim_total_time,
+  time_compare = sim_time_compare,
+  time_mdl_fit = sim_time_mdl
 )
 
 
