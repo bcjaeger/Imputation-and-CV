@@ -47,7 +47,7 @@ data_train <- juice(recipe_prepped)
 data_test <- bake(recipe_prepped, new_data = testing(data_split))
 
 training_folds <- vfold_cv(data_train, v = 10)
-testing_rows <- map(training_folds$splits, complement)
+rows_testing <- map(training_folds$splits, complement)
 
 results <- data_train %>% 
   brew_nbrs(outcome = sale_price) %>%
@@ -106,13 +106,44 @@ icv_estimates <- icv %>%
   group_by(impute) %>% 
   summarize_at(vars(starts_with('icv')), mean)
 
+cvi <- training_folds$splits %>% 
+  map(
+    ~training(.x) %>% 
+      brew_nbrs(outcome = sale_price) %>%
+      verbose_on(level = 1) %>%
+      spice(with = spicer_nbrs(k_neighbors = 1:35)) %>%
+      mash() %>% 
+      stir() %>% 
+      ferment(data_new = testing(.x)) %>% 
+      bottle(type = 'tibble') %>% 
+      use_series('wort') %>% 
+      as_tibble() %>% 
+      select(-pars)
+  )
+
+cvi_estimates <- cvi %>%
+  bind_rows(.id = 'fold') %>% 
+  mutate(
+    cvi_rf = map2_dbl(training, testing, rforest),
+    cvi_lm = map2_dbl(training, testing, linmod)
+  ) %>% 
+  group_by(impute) %>% 
+  summarize_at(vars(starts_with('cvi')), mean)
+
+
 results <- results %>% 
   mutate(
     ext_rf = map2_dbl(training, testing, rforest),
     ext_lm = map2_dbl(training, testing, linmod)
   ) %>% 
-  left_join(icv_estimates)
+  left_join(icv_estimates) %>% 
+  left_join(cvi_estimates)
 
-
+results %>% 
+  select(impute, ends_with('lm')) %>% 
+  pivot_longer(cols = -impute) %>% 
+  ggplot(aes(x=impute, y=value, color = name)) + 
+  geom_line()
 
 ##
+
