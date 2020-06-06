@@ -45,6 +45,7 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE)
 options(scipen = 99999)
 
 library(tidyverse)
+library(tblStrings)
 
 sim_desc <- read_rds('../results/02-sim_descriptives.rds')
 sim_tbls <- read_rds('../results/03-sim_tabulate.rds')
@@ -342,12 +343,25 @@ The training and testing data were amputed in the same manner using four prototy
 
 \subsection{Results}
 
-TO BE FILLED
+```{r}
+ames <- read_rds("../results/07-ames_tabulate.rds")
 
+ames_bias <- ames$tbl_data %>% 
+  filter(measure == 'Bias')
+
+ames_sd <- ames$tbl_data %>% 
+  filter(measure == 'Standard deviation')
+
+```
+
+
+A total of `r ames$nsims` out of `r ames$nsims` (100%) resampling replicates were completed over a span of `r tbl_val(ames$times)` computing hours. Across all replicates, the mean number of minutes used to form imputed data using \cvi\space and \icv\space were `r tbl_val(ames$times_cvi)` and `r tbl_val(ames$times_icv)`, respectively. The mean (standard deviation) external $R^2$ for the linear regression and random forest models were `r glue::glue_collapse(na.omit(ames$tbl_data$ext), sep = ' and ')`, respectively. Overall, both CV techniques slightly over and under estimated the external $R^2$ value when linear regression and random forests were applied, respectively. For linear regression, the mean (standard deviation) bias was `r ames_bias$cvi[1]` and `r ames_bias$icv[1]` for \cvi\space and \icv, respectively. The standard deviation of error estimates were `r ames_sd$cvi[1]` and `r ames_sd$icv[1]`, respectively. For random forests, the mean (standard deviation) bias was `r ames_bias$cvi[2]` and `r ames_bias$icv[2]` for \cvi\space and \icv, respectively. The standard deviation of error estimates were `r ames_sd$cvi[2]` and `r ames_sd$icv[2]`, respectively.
+
+When \cvi\space and \icv\space were applied to select the number of neighbors used for imputation, downstream linear models obtained an external $R^2$ of `r ames$tuned_smry$cvi_lm` and `r ames$tuned_smry$icv_lm`, respectively. Similarly, downstream random forests obtained an external $R^2$ of `r ames$tuned_smry$cvi_rf` and `r ames$tuned_smry$icv_rf`, respectively. As a reference point, the mean (standard deviation) downstream external $R^2$ was `r ames$meanimpute_smry$ext_lm` and `r ames$meanimpute_smry$ext_rf` using linear regression and random forests, respectively. 
 
 \section{Discussion and recommendations} \label{sec:discuss}
 
-We demonstrated empirical properties of \cvi\space and \icv\space using nearest-neighbor imputation and LASSO regression. We selected these methods because they have been studied thoroughly and are widely used in applied settings. To generate data that matched the structure of our modeling procedure, we generated outcomes using linear effects without interaction. We studied three broad scenarios that were relevant to CV: Scenario 1 was an ideal setting where \icv\space and \cvi\space should have provided almost identical estimates of generalization error. Scenarios 2 and 3 were meant to test whether \icv\space produced biased estimates of generalization error because in settings where \icv\space clearly did not mimic the final application of a trained model to an external validation set. Remarkably, despite its bias in scenario 2, the reduction in variance of $R^2$ estimates using \icv\space lead to a lower overall RMSE compared to \cvi. Downstream model performance was consistently superior when \cvi\space was used instead of \icv. However, the increase in performance was modest (maximum overall relative difference in external $R^2$: `r tune_biggest_diff$perc_diff`%). 
+We demonstrated empirical properties of \cvi\space and \icv\space using nearest-neighbor imputation prior to applying regression and random forest models. We selected these methods because they have been studied thoroughly and are widely used in applied settings. In simulated experiments, we generated outcomes using linear effects without interaction. We also studied three broad scenarios that were relevant to CV: Scenario 1 was an ideal setting where \icv\space and \cvi\space should have provided almost identical estimates of generalization error. Scenarios 2 and 3 were meant to test whether \icv\space produced biased estimates of generalization error because in settings where \icv\space clearly did not mimic the final application of a trained model to an external validation set. Remarkably, despite its bias in scenario 2, the reduction in variance of $R^2$ estimates using \icv\space lead to a lower overall RMSE compared to \cvi. Downstream model performance was consistently superior when \cvi\space was used instead of \icv. However, the increase in performance was smaller than 1% relative change (maximum overall relative difference in external $R^2$: `r tune_biggest_diff$perc_diff`%). While this difference is very small, it may be possible to find a different generative scenario where the difference is larger.
 
 <!-- % P1 summary -->
 

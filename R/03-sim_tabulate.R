@@ -265,7 +265,7 @@ tabulate_errors <- function(
   
   if(needs_rounding){
     out_df <- out_df %>% 
-      mutate_at(vars(contains('..')), tbv_round)
+      mutate_at(vars(contains('..')), tbl_val)
   }
   
    out_df %>% 
