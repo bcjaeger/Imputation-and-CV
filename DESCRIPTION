@@ -27,7 +27,23 @@ Imports:
     knitr,
     ipa (>= 0.1.0),
     tblStrings (>= 0.0.0.9000),
-    here
+    here,
+    mice,
+    rsample,
+    rslurm,
+    magrittr,
+    data.table,
+    glmnet,
+    glue,
+    mvtnorm,
+    stats,
+    gt,
+    kableExtra,
+    yardstick,
+    scales,
+    AmesHousing,
+    janitor,
+    tidymodels
 Remotes: 
     bcjaeger/ipa,
     bcjaeger/tblStrings
