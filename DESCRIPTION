@@ -1,0 +1,34 @@
+Package: cvimputation
+Title: Research compendium for paper "When to Impute? Imputation before and during cross-validation"
+Version: 0.0.0.9000
+Authors@R: 
+  c(
+    person(given = "Byron",
+           family = "Jaeger",
+           role = c("aut", "cre"),
+           email = "bcjaeger@uab.edu",
+           comment = c(ORCID = "https://orcid.org/xxxx")),
+    person(given = "Nicholas",
+           family = "Tierney",
+           role = c("aut", "cre"),
+           email = "nicholas.tierney@gmail.com",
+           comment = c(ORCID = "https://orcid.org/0000-0003-1460-8722"))
+           )
+Description: Research compendium for paper "When to Impute? Imputation before and during cross-validation"
+License: MIT + file LICENSE
+Encoding: UTF-8
+Language: es
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.0
+Imports: 
+    rmarkdown (>= 2.2),
+    rticles,
+    knitr,
+    ipa (>= 0.1.0),
+    tblStrings (>= 0.0.0.9000)
+Remotes: 
+    bcjaeger/ipa,
+    bcjaeger/tblStrings
+Depends: 
+    tidyverse

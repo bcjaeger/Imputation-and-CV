@@ -7,3 +7,5 @@ results/simulation
 results/ameshousing
 diagrams/*.pptx
 SIM_Instructions
+*.log
+tlcheck*

@@ -1,0 +1,29 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# When to Impute? Imputation before and during cross-validation
+
+<!-- badges: start -->
+
+<!-- badges: end -->
+
+This is a repository that contains the work for the paper “When to
+Impute? Imputation before and during cross-validation”.
+
+You can install the required packages by installing this package with:
+
+``` r
+#install.packages("remotes")
+remotes::install_github("bcjaeger/Imputation-and-CV")
+```
+
+The details for the paper are contained in the folder, `analysis`, under
+`SIM_Article`.
+
+If you are cloning the repo you can install the packages required with:
+
+``` r
+install.packages("usethis")
+library(usethis)
+install_dev_deps()
+```
