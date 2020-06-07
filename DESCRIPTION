@@ -26,7 +26,8 @@ Imports:
     rticles,
     knitr,
     ipa (>= 0.1.0),
-    tblStrings (>= 0.0.0.9000)
+    tblStrings (>= 0.0.0.9000),
+    here
 Remotes: 
     bcjaeger/ipa,
     bcjaeger/tblStrings
