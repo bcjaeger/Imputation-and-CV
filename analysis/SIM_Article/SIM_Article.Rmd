@@ -50,6 +50,7 @@ library(tblStrings)
 sim_desc <- read_rds(
   here::here('analysis/results/02-sim_descriptives.rds')
 )
+
 sim_tbls <- read_rds(
   here::here('analysis/results/03-sim_tabulate.rds')
 )
@@ -68,7 +69,7 @@ Machine learning analyses often involve 'pipeline' modeling algorithms, which ar
 
 Missing data (MD) occur frequently in machine learning analyses, and several learning algorithms (e.g., regression) are incompatible with MD. Imputation is a technique that replaces MD with estimated values, and is often among the most computationally expensive operations in pipeline modeling algorithms. For example, the \texttt{missForest} imputation algorithm may fit one random forest model for each column that contains MD. Computational expense of applying \texttt{missForest} or other complex imputation strategies during each replicate of CV may lead analysts to prefer more convenient but less effective strategies to handle MD. A more computationally efficient approach would be to implement `unsupervised imputation' (\ie imputing MD without accessing outcome information) \emph{before} conducting CV. However, it is unclear whether an unsupervised operation that modifies the training data (\ie imputation) rather than removing columns from the training data (\ie variable selection) can be applied prior to CV without causing model error estimates to become overly optimistic. 
 
-In this manuscript, we conduct empirical studies assessing whether unsupervised imputation implemented to the training data before CV (a strategy we will refer to as \icv) can yield error estimates for the entire pipeline modeling algorithm that conistently estimate its generalization error. We compare estimated pipeline error according to \icv\space with estimated pipeline error when unsupervised imputation is applied \emph{during each replicate} of CV (a strategy we will refer to as \cvi). Both simulated and real data are leveraged to draw these comparisons, and all scripts used to generate results are publically available on the [first author's GitHub](https://github.com/bcjaeger/Imputation-and-CV). Our analysis also introduces and applies the \texttt{ipa} R package (\textbf{i}mputation for \textbf{p}redictive \textbf{a}nalytics), which provides functions to create single or multiple imputed training and testing sets for prediction modeling. 
+In this manuscript, we conduct empirical studies assessing whether unsupervised imputation implemented to the training data before CV (a strategy we will refer to as \icv) can yield error estimates for the entire pipeline modeling algorithm that consistently estimate its generalization error. We compare estimated pipeline error according to \icv\space with estimated pipeline error when unsupervised imputation is applied \emph{during each replicate} of CV (a strategy we will refer to as \cvi). Both simulated and real data are leveraged to draw these comparisons, and all scripts used to generate results are publically available on the [first author's GitHub](https://github.com/bcjaeger/Imputation-and-CV). Our analysis also introduces and applies the \texttt{ipa} R package (\textbf{i}mputation for \textbf{p}redictive \textbf{a}nalytics), which provides functions to create single or multiple imputed training and testing sets for prediction modeling. 
 
 The rest of this manuscript is organized as follows. In Section \ref{sec:missing_data}, we discuss MD mechanisms and prevailing MD strategies for statistical inference and machine learning. In Section \ref{sec:oop}, we explicitly map the order of operations for \cvi\space and \icv. In section \ref{sec:sim}, we conduct a simulation study to assess empirical differences between \cvi\space and \icv. The two procedures are compared using real data in Section \ref{sec:app}. Last, in Section \ref{sec:discuss}, we organize the data from preceding sections to form recommendations for practitioners. 
 
@@ -114,13 +115,11 @@ The rest of this manuscript is organized as follows. In Section \ref{sec:missing
 In the context of statistical prediction, analysts usually work with a training set and and an external testing set. A pipeline modeling algorithm developed with data from the training set can be externally validated using data from the testing set. Workflows to develop and validate a pipeline model often include three steps: (1) selection of pipeline parameter values (\ie parameters relevant to any operation in the pipeline), (2) training and application of data pre-processing operations for the training and testing sets, separately, (3) development of a prediction model using data from the training set, and (4) validation of the prediction function using data from the testing set. (\textbf{Figure} \ref{fig:workflow_ml}). Pipeline parameter values may be set apriori or determined empirically using resampling (\eg $k$-fold CV). We refer to the $k-1$ folds and $k$ remaining fold used to internally train and test a modeling algorithm as analysis and assessment sets, respectively, to avoid abuse of notation.
 
 
-```{r diagram-workflow-ml, out.width='100%', fig.cap='A modeling pipeline for machine learning analysis.\\label{fig:workflow_ml}'}
-
-knitr::include_graphics(
-  here::here('analysis/diagrams/workflow_ML.png')
-)
-
-```
+\begin{figure}
+\includegraphics[width=1\linewidth]{figs/workflow_ML} 
+\caption{A modeling pipeline for machine learning analysis.}
+\label{fig:workflow_ml}
+\end{figure}
 
 <!-- Add diagrams for the CV methods -->
 
@@ -128,22 +127,17 @@ If CV is applied to facilitate selection of pipeline parameter values, it is cri
 
 To remove any possibility of data leakage, all steps of the pipeline may be performed in analysis and assessment sets, separately, within each replicate of CV. For example, consider centering and scaling predictor variables such that they have zero mean and unit variance. As these operations do not involve the outcome, they are entirely unsupervised. Nevertheless, centering and scaling operations are usually completed in analysis and assessment sets, separately, during each replicate of CV. Specifically, the means and standard deviations are computed using the analysis data and then those values are applied to center and scale predictors in both the analysis and assessment sets (CITE). We refer to this traditional implementation of CV as \cvi\space (\textbf{Figure} \ref{fig:workflow_cvi}) and refer to our experimental implementation of CV (\ie one where unsupervised imputation occurs before CV begins) as \icv\space (\textbf{Figure} \ref{fig:workflow_icv}). Regardless of which implementation is applied, the output of CV is a set of pipeline parameter values and an estimate of generalization error. The pipeline parameter values are subsequently used to develop and validate a final prediction model using the full training set and testing set, respectively.
 
-```{r diagram-workflow-cvi, out.width = '100%', fig.cap = 'A traditional workflow for cross-validation that applies k-nearest neighbor unsupervised imputation within each replicate (\\ie \\cvi).\\label{fig:workflow_cvi}'}
+\begin{figure}
+\includegraphics[width=1\linewidth]{figs/workflow_CVI} 
+\caption{A traditional workflow for cross-validation that applies k-nearest neighbor unsupervised imputation within each replicate (\ie \cvi).}
+\label{fig:workflow_cvi}
+\end{figure}
 
-knitr::include_graphics(
-  here::here('analysis/diagrams/workflow_CVI.png')
-)
-
-```
-
-```{r diagram-workflow-icv, out.width = '100%', fig.cap = 'An experimental workflow for cross-validation that applies k-nearest neighbor unsupervised imputation prior to data splitting (\\ie \\icv).\\label{fig:workflow_icv}'}
-
-knitr::include_graphics(
-  here::here('analysis/diagrams/workflow_ICV.png')
-)
-
-```
-
+\begin{figure}
+\includegraphics[width=1\linewidth]{figs/workflow_ICV} 
+\caption{An experimental workflow for cross-validation that applies k-nearest neighbor unsupervised imputation prior to data splitting (\ie \icv)}
+\label{fig:workflow_icv}
+\end{figure}
 
 <!-- % P1 talk about the importance of order or operations for supervised learning -->
 <!-- %   example - mean/scale in each fold versus before CV -->
@@ -403,12 +397,11 @@ The current study has several strengths. We implemented computational experiment
 
 `r sim_tbls$tbl_tune`
 
-```{r simuted-results, out.width='100%', fig.cap='External generalization error and internal estimates of generalization error using \\icv\\space and \\cvi \\label{fig:sim_r2}'}
 
-knitr::include_graphics(
-  here::here('analysis/SIM_Article/figs/sim_r2.png')
-)
-
-```
+\begin{figure}
+\includegraphics[width=1\linewidth]{figs/sim_r2} 
+\caption{External generalization error and internal estimates of generalization error using \icv\space and \cvi.}
+\label{fig:sim_r2}
+\end{figure}
 
 \FloatBarrier

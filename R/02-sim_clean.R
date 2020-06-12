@@ -9,7 +9,7 @@ library(tidyverse)
 library(tblStrings)
 
 directories <- list.dirs(
-  path = 'results/simulation', 
+  path = 'results_raw/simulation', 
   full.names = TRUE,
   recursive = FALSE
 )
@@ -17,7 +17,7 @@ directories <- list.dirs(
 #directories <- directories[1:3]
 
 data_files <- directories %>% 
-  str_remove('results/simulation/_rslurm_sim_x_') %>% 
+  str_remove('results_raw/simulation/_rslurm_sim_x_') %>% 
   str_split('_x_') %>% 
   map(set_names, c('date','scenario','seeds')) %>% 
   enframe(name = 'directory') %>% 
@@ -119,9 +119,8 @@ sim_desc <- list(
 )
 
 
-write_rds(sim_desc, 'results/02-sim_descriptives.rds')
-
-write_rds(data_out, 'results/02-sim_clean.rds')
+write_rds(sim_desc, 'analysis/results/02-sim_descriptives.rds')
+write_rds(data_out, 'analysis/results/02-sim_clean.rds')
 
 
 

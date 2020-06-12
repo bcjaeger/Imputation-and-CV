@@ -1,11 +1,7 @@
 .Rhistory
 .RData
 .Rproj.user
-results/02-sim_clean.rds
-results/06-ames_clean.rds
-results/simulation
-results/ameshousing
-diagrams/*.pptx
+results_raw
 SIM_Instructions
 *.log
 tlcheck*
