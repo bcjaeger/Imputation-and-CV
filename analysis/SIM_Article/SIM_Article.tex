@@ -122,6 +122,9 @@ is unclear whether an unsupervised operation that modifies the training
 data (\textit{i.e., }imputation) rather than removing columns from the
 training data (\textit{i.e., }variable selection) can be applied prior
 to CV without causing model error estimates to become overly optimistic.
+In addition, it is worth investigating whether unsupervised operations
+of this type can result in poorly selected tuning parameters and thus
+degrade the external performance of downstream models.
 
 In this manuscript, we conduct empirical studies assessing whether
 unsupervised imputation implemented to the training data before CV (a
@@ -280,7 +283,14 @@ $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space (\textbf{Figure}
 the output of CV is a set of pipeline parameter values and an estimate
 of generalization error. The pipeline parameter values are subsequently
 used to develop and validate a final prediction model using the full
-training set and testing set, respectively.
+training set and testing set, respectively. Notably, intermediate
+estimates of generalization error are often used by CV learners
+{[}DEFINE CV LEARNER IN INTRO OR OTHER{]}
+(\textit{e.g., }\texttt{glmnet.cv}) to select tuning parameter values.
+Differences in the values selected by competing strategies
+(\textit{i.e., }$\texttt{CV}\!\circlearrowright\!\texttt{I}$\space or
+$\texttt{I}\!\!\rightarrow\!\texttt{CV}$) may have measurable impact on
+the generalization error of their downstream models.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{figs/workflow_CVI} 
@@ -322,10 +332,10 @@ differences between
 $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and
 $\texttt{I}\!\!\rightarrow\!\texttt{CV}$. Our primary objective was to
 measure and compare how well each strategy approximated a model's true
-generalization error. We assessed estimation of true external \(R^2\)
-using bias, variance, and root-mean-squared error (RMSE). The RMSE
-provides an overall assessment of estimation accuracy that depends on
-both bias and variance. A secondary objective was to assess the
+generalization error. We assessed estimation of true oracle external
+\(R^2\) using bias, variance, and root-mean-squared error (RMSE). The
+RMSE provides an overall assessment of estimation accuracy that depends
+on both bias and variance. A secondary objective was to assess the
 performance of downstream modeling strategies whose tuning parameters
 were selected using
 $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and
@@ -406,13 +416,13 @@ settings determined by these parameters and also provide overall summary
 statistics for scenarios 1, 2, and 3 when data are MCAR and MAR
 (\textit{i.e., }aggregating over training sample size and predictor to
 noise ratio). In each simulation replication, we computed the true
-external \(R^2\) in the validation set for each potential value of
-nearest neighbors
-(\textit{i.e., }\(k \in \lbrace 1, 2, \ldots, 35 \rbrace\)). We also
-estimated external \(R^2\) for each value of \(k\) using
-$\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and
+oracle external \(R^2\) in the validation set for each potential value
+of nearest neighbors
+(\textit{i.e., }\(k \in \lbrace 1, 2, \ldots, 35 \rbrace\)). {[}DEFINE
+ORACLE{]} We also estimated external \(R^2\) for each value of \(k\)
+using $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and
 $\texttt{I}\!\!\rightarrow\!\texttt{CV}$, separately, to evaluate how
-well these CV procedures estimated the true external \(R^2\). We
+well these CV procedures estimated the true oracle external \(R^2\). We
 assessed the difference between estimated external \(R^2\) according to
 $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and
 $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space as well as the bias,
@@ -578,6 +588,8 @@ point, the mean (standard deviation) downstream external \(R^2\) was
 0.73 (0.03) and 0.81 (0.02) using linear regression and random forests,
 respectively.
 
+Paragraph to contextualize and interpret the results.
+
 \section{Discussion and recommendations} \label{sec:discuss}
 
 We demonstrated empirical properties of
@@ -630,7 +642,15 @@ rule out the possibility that testing data are drawn from a different
 population or distribution than their training data, the current study
 clearly suggests
 $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space should be applied
-instead of $\texttt{I}\!\!\rightarrow\!\texttt{CV}$.
+instead of $\texttt{I}\!\!\rightarrow\!\texttt{CV}$. However, it is
+worth noting that almost all prediction modeling decisions require
+balancing bias and variance to optimize precision. Our results do not
+indicate any strong difference between
+$\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space and
+$\texttt{CV}\!\circlearrowright\!\texttt{I}$with regard to precision
+(\textit{i.e., }RMSE, see \emph{Table} \ref{tab:rmse}). We suspect that
+in most prediction modeling applications, precision rather than bias is
+of primary interest.
 
 The current study has several strengths. We implemented computational
 experiments using real and simulated data. We included different

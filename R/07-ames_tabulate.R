@@ -2,6 +2,8 @@
 library(tidyverse)
 library(tblStrings)
 
+# TODO: make standard errors instead of standard deviation
+
 ames_init <- read_rds('results/06-ames_clean.rds')
 
 ames_nsims <- nrow(ames_init)
