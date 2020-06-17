@@ -284,6 +284,8 @@ tabulate_errors <- function(
   
 }
 
+# TODO: for all tables, include indication in caption that R2 is scaled.
+
 # external r-squared table ------------------------------------------------
 
 tbl_ext_rsq <- tabulate_pointErrs(
