@@ -348,6 +348,7 @@ The training and testing data were amputed in the same manner using four prototy
 \subsection{Results}
 
 ```{r read-ames}
+
 ames <- read_rds(
   here::here('analysis/results/07-ames_tabulate.rds')
 )
