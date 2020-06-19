@@ -64,7 +64,7 @@ ames_variance <- ames_clean %>%
 bias_smry <- ames_bias %>% 
   pivot_wider(values_from = value, names_from = metric) %>% 
   transmute(measure, model, type, 
-    tbv = tbl_string("{100*mn} ({100*sd})")) %>% 
+    tbv = tbl_string("{mn} ({sd})")) %>% 
   pivot_wider(values_from = tbv, names_from = type)
 
 variance_smry <- ames_variance %>% 
@@ -80,7 +80,7 @@ estimate_smry <- ames_clean %>%
   summarize(mn = mean(value), sd = sd(value)) %>% 
   ungroup() %>% 
   mutate(measure = 'estimate', 
-    tbv = tbl_string("{100*mn} ({100*sd})")) %>%
+    tbv = tbl_string("{mn} ({sd})")) %>%
   select(-mn, -sd) %>% 
   pivot_wider(values_from = tbv, names_from = type)
 
