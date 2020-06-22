@@ -7,7 +7,7 @@ library(gt)
 library(knitr)
 library(kableExtra)
 
-sim_full <- read_rds('results/02-sim_clean.rds') 
+sim_full <- read_rds('results_raw/02-sim_clean.rds') 
 
 
 # general footnote for tables
@@ -150,29 +150,32 @@ cmp_times_smry <- bind_rows(cmp_times_smry, cmp_times_overall)
 
 # make some datasets to pass into kable function --------------------------
 
+# TODO: fix order of 100/500/1000/5000
+# TODO: show figure 1 first
+# TODO: for all tables, include indication in caption that R2 is scaled.
+
 kbl_mse <- mse_smry %>% 
   transmute(
-    key, nobs, ncov, 
-    external = as.character(
-      100 * pointErr(external_mn, external_sd, style = 'brac')
-    )
+    key, 
+    nobs = factor(nobs, levels = c(100, 500, 1000, 5000)), 
+    ncov, 
+    external = tbl_string("{100*external_mn} ({100*external_sd})")
   ) %>% 
   pivot_wider(names_from = key, values_from = external) 
 
 kbl_cv_diffs <- mse_smry %>% 
   transmute(
-    key, nobs, ncov, 
-    cv_diffs = as.character(
-      100 * pointErr(abs_diff_mn, abs_diff_sd, style = 'brac')
-    )
+    key, 
+    nobs = factor(nobs, levels = c(100, 500, 1000, 5000)), 
+    ncov, 
+    cv_diffs = tbl_string("{100*abs_diff_mn} ({100*abs_diff_sd})")
   ) %>% 
-  pivot_wider(names_from = key, values_from = cv_diffs)  %>% 
+  pivot_wider(names_from = key, values_from = cv_diffs) %>% 
   arrange(ncov, nobs)
   
 kbl_df_cmp <- cmp_times_smry %>% 
-  mutate(diff_rel = pointErr(diff_rel_mn, diff_rel_sd, style = 'brac')) %>% 
+  mutate(diff_rel = tbl_string("{diff_rel_mn} ({diff_rel_sd})")) %>% 
   select(key, nobs, ncov, action, diff_rel) %>%
-  mutate_if(is_pointErr, as.character) %>% 
   pivot_wider(names_from = c(action, key), values_from = diff_rel)  %>% 
   arrange(ncov, nobs)
 
@@ -195,7 +198,6 @@ tabulate_pointErrs <- function(data, format = 'latex',
   align_C <- rep("c", ncol(data) - 2)
   
   align <- c(align_L, align_C)
-  
   data %>%
     select(-ncov) %>% 
     kable(format = format, col.names = cnames, booktabs = TRUE,
@@ -284,7 +286,6 @@ tabulate_errors <- function(
   
 }
 
-# TODO: for all tables, include indication in caption that R2 is scaled.
 
 # external r-squared table ------------------------------------------------
 
@@ -356,4 +357,4 @@ list(
   tbl_rmse = tbl_rmse,
   tbl_tune = tbl_tune
 ) %>% 
-  write_rds('results/03-sim_tabulate.rds')
+  write_rds('analysis/results/03-sim_tabulate.rds')

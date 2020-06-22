@@ -61,10 +61,12 @@ imputation prior to CV would bias estimates of generalization error.
 Results from simulation and resampling studies show that despite a
 slight optimistic bias, the reduced variance of imputation before CV
 compared to imputation during each replicate of CV lead to a lower
-overall root mean squared error for external \(R^2\). In conclusion,
-unsupervised imputation before CV appears valid in certain settings and
-may be a helpful strategy that enables analysts to use more flexible
-imputation techniques without incurring high computational costs.}
+overall root mean squared error for the oracle external \(R^2\) (\ie the
+external \(R^2\) obtained by a correctly specified model). In
+conclusion, unsupervised imputation before CV appears valid in certain
+settings and may be a helpful strategy that enables analysts to use more
+flexible imputation techniques without incurring high computational
+costs.}
 
 \keywords{Class file; \LaTeX; Statist. Med.; Rmarkdown;}
 
@@ -209,18 +211,19 @@ ideal for statistical inference.
 
 The primary objective for statistical prediction in the presence of MD
 is to develop a prediction function that accurately generalizes to
-external data that contain missing values. In contrast to statistical
-inference, single imputation is often used for prediction models.
-Moreover, imputation strategies with greater accuracy often lead to
-better performance of downstream models (\textit{i.e., }models fitted to
-the imputed data). For example, Jerez et al.~found that single
-imputation using machine learning models provided superior downstream
-model prognostic accuracy compared to multiple imputation based on
-regression and expectation maximization.\citep{jerez2010missing} The
-results of this analysis exemplify a perspective that will be taken
-throughout the current study. Namely, the authors treated imputation
-strategies as components of the modeling pipeline, with parameters that
-can be `tuned' in the same manner as a prediction model.
+external data, which may or may not contain missing values (see Section
+\ref{subsec:testing_data}). In contrast to statistical inference, single
+imputation is often used for prediction models. Moreover, imputation
+strategies with greater accuracy often lead to better performance of
+downstream models (\textit{i.e., }models fitted to the imputed data).
+For example, Jerez et al.~found that single imputation using machine
+learning models provided superior downstream model prognostic accuracy
+compared to multiple imputation based on regression and expectation
+maximization.\citep{jerez2010missing} The results of this analysis
+exemplify a perspective that will be taken throughout the current study.
+Namely, the authors treated imputation strategies as components of the
+modeling pipeline with parameters that can be `tuned' in the same manner
+as a prediction model.
 
 \section{Order of Operations} \label{sec:oop}
 
@@ -304,26 +307,26 @@ the generalization error of their downstream models.
 \label{fig:workflow_icv}
 \end{figure}
 
-\subsection{Testing data}
+\subsection{Testing data} \label{subsec:testing_data}
 
 Ideally, external testing data will not contain MD, and imputation will
 not be necessary. However, If MD are present in the external testing
-data, additional steps may be taken to perform imputation. One may
-approach the imputation of testing data using (1) only the training
-data, (2) only the testing data, or (3) using both training and testing
-data. It is common to use only the training data to impute MD in the
+data, additional steps may be taken to engage with them. One may impute
+missing values in the testing data using (1) only the training data, (2)
+only the testing data, or (3) using both training and testing data. It
+is common to use only the training data to impute missing values in the
 testing data. However, some imputation procedures can only impute values
 in the data that were used to train the imputation procedure
 (\textit{e.g., }matrix decomposition methods such as
 \texttt{softImpute}).\citep{softImpute} To apply these types of
-imputation procedures, approach (2) or (3) may be taken. Throughout the
-current study, we use only the training data to impute missing values in
-the testing data,
-$\texttt{CV}\!\circlearrowright\!\texttt{I}$\space uses only the
-analysis data to impute missing values in the assessment data, and
+imputation procedures, approach (2) or (3) may be taken. In the current
+analysis, $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space uses only
+the analysis data to impute missing values in the assessment data, and
 $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space uses a stacked version of
 the analysis and assessment data (\textit{i.e., }all of the training
-data) to impute missing values.
+data) to impute missing values. In the broader ML workflow (see Figure
+\ref{fig:workflow_ml}), we employ approach (1), as is standard in
+applied practice.
 
 \section{Simulated experiments} \label{sec:sim}
 
@@ -331,14 +334,18 @@ The goal of the current simulation study was to assess empirical
 differences between
 $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and
 $\texttt{I}\!\!\rightarrow\!\texttt{CV}$. Our primary objective was to
-measure and compare how well each strategy approximated a model's true
-generalization error. We assessed estimation of true oracle external
-\(R^2\) using bias, variance, and root-mean-squared error (RMSE). The
-RMSE provides an overall assessment of estimation accuracy that depends
-on both bias and variance. A secondary objective was to assess the
-performance of downstream modeling strategies whose tuning parameters
-were selected using
-$\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and
+measure and compare how well each strategy (1) approximated a model's
+generalization error and (2) selected parameters (both for imputation
+and modeling) that would maximize downstream model accuracy. To complete
+item (1), we assessed estimation of the oracle external \(R^2\). The
+`oracle' performance is the performance of a model whose specification
+coincides with the specification that generated the data the model is
+fitted to. We used bias, variance, and root-mean-squared error (RMSE) to
+quantify estimation accuracy. The RMSE provides an overall assessment of
+estimation accuracy that depends on both bias and variance. To complete
+item (2), we compared the performance (\textit{i.e., }the external
+\(R^2\)) of downstream models whose tuning parameters were selected
+using $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space versus
 $\texttt{I}\!\!\rightarrow\!\texttt{CV}$.
 
 \subsection{Data-generating mechanisms} \label{subsec:data_gen}
@@ -397,14 +404,19 @@ validation set.
 
 We applied \(k\)-nearest-neighbor imputation to handle MD and least
 absolute shrinkage and selection operator (LASSO) regression to develop
-prediction functions throughout the simulated experiments. Nearest
-neighbors in the training set were used to form imputed values in the
-training and external validation sets. We created one imputed set for
-each \(k \in \lbrace 1, 2, \ldots, 35\rbrace\). We selected a value for
-the regularization parameter \(lambda\) in each imputed dataset,
-separately, using 10-fold CV (\textit{i.e., }\texttt{cv.glmnet}). The
-\(\lambda\) value selected was the one that minimized cross-validated
-RMSE.
+prediction functions throughout the simulated experiments. The LASSO
+model is an `oracle' model for these simulations since all data were
+generated with linear, independent effects. Nearest neighbor aggregation
+was used to form imputed values in the training and testing set and also
+in the analysis and assessment set for
+$\texttt{CV}\!\circlearrowright\!\texttt{I}$. We created one imputed
+dataset for each \(k \in \lbrace 1, 2, \ldots, 35\rbrace\). We selected
+a value for the regularization parameter \(lambda\) in each imputed
+dataset, separately, using 10-fold CV
+(\textit{i.e., }\texttt{cv.glmnet}). The \(\lambda\) value selected was
+the one that minimized the model's cross-validated RMSE. The value of
+\(k\) that minimized cross-validated RMSE was used to impute the entire
+training set prior to fitting a final \texttt{cv.glmnet} model.
 
 \paragraph{Analysis plan}
 
@@ -435,17 +447,17 @@ parameter for a penalized regression model.
 
 \subsection{Results} \label{subsec:sim_results}
 
-Overall, a total of 89,962 out of 90,000 (99.96\%) simulation replicates
-were completed over a span of 33,252 computing hours. Incomplete
-replicates were not analyzed, as these were replicates where at least
-one of the amputation, imputation, or prediction models did not
+Overall, a total of 101,480 out of 102,000 (99.49\%) simulation
+replicates were completed over a span of 37,987 computing hours.
+Incomplete replicates were not analyzed, as these were replicates where
+at least one of the amputation, imputation, or prediction models did not
 converge. Across all replicates, the mean number of minutes used to form
 imputed data using
 $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and
-$\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space were 7.36 and 0.80,
+$\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space were 7.42 and 0.80,
 respectively, a ratio of 9.24. As a point of reference, using the full
 training set, the mean number of minutes needed to tune and fit
-\texttt{glmnet} models was 1.34.
+\texttt{glmnet} models was 1.37.
 
 Across all scenarios, the mean external \(R^2\) ranged from 0.233 to
 0.443 (\textbf{Table} \ref{tab:ext_rsq}). External \(R^2\) values were
@@ -563,20 +575,21 @@ A total of 5000 out of 5000 (100\%) resampling replicates were completed
 over a span of 927 computing hours. Across all replicates, the mean
 number of minutes used to form imputed data using
 $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and
-$\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space were 10.1 and 1.01,
+$\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space were 10 and 1.0,
 respectively. The mean (standard deviation) external \(R^2\) for the
-linear regression and random forest models were 76.4 (2.65) and 80.9
-(2.05), respectively. Overall, both CV techniques slightly over and
+linear regression and random forest models were 0.76 (0.03) and 0.81
+(0.02), respectively. Overall, both CV techniques slightly over and
 under estimated the external \(R^2\) value when linear regression and
 random forests were applied, respectively. For linear regression, the
-mean (standard deviation) bias was -0.15 (3.43) and -0.21 (3.43) for
+mean (standard deviation) bias was -0.0015 (0.0343) and -0.0021 (0.0343)
+for $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and
+$\texttt{I}\!\!\rightarrow\!\texttt{CV}$, respectively. The standard
+deviation of error estimates were 0.0115 and 0.0115, respectively. For
+random forests, the mean (standard deviation) bias was 0.0009 (0.0255)
+and 0.0005 (0.0255) for
 $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and
 $\texttt{I}\!\!\rightarrow\!\texttt{CV}$, respectively. The standard
-deviation of error estimates were 1.153 and 1.145, respectively. For
-random forests, the mean (standard deviation) bias was 0.09 (2.55) and
-0.05 (2.55) for $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and
-$\texttt{I}\!\!\rightarrow\!\texttt{CV}$, respectively. The standard
-deviation of error estimates were 0.837 and 0.857, respectively.
+deviation of error estimates were 0.0084 and 0.0086, respectively.
 
 When $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and
 $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space were applied to select
@@ -587,6 +600,20 @@ respectively. Similarly, downstream random forests obtained an external
 point, the mean (standard deviation) downstream external \(R^2\) was
 0.73 (0.03) and 0.81 (0.02) using linear regression and random forests,
 respectively.
+
+\paragraph{Interpretation}
+
+The use of $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space versus
+$\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space resulted in a mean
+relative change of 0.0262\% and -0.0220\% in downstream model
+performance for linear models and random forests, respectively. These
+shifts in model performance come at the cost of a \(v\)-fold increase in
+the amount of computational resources allocated to handle MD. While
+improvements on the order of 0.02\% may be notable for select analytic
+scenarios, these shifts in model performance may not be relevant in the
+majority of supervised learning analyses. In the latter case, it seems
+unsupervised imputation before CV can allow for pragmatic handling of MD
+without sacrificing the integrity of CV.
 
 Paragraph to contextualize and interpret the results.
 
@@ -692,28 +719,28 @@ N & MAR & MCAR & MAR & MCAR & MAR & MCAR\\
 \addlinespace[0.75em]
 \multicolumn{7}{l}{\textbf{10 predictors, 10 junk}}\\
 \hline
-\hspace{1em}100 & 37.9 (3.44) & 37.8 (3.42) & 33.5 (6.54) & 33.2 (6.83) & 33.5 (6.55) & 33.3 (6.82)\\
-\hspace{1em}500 & 42.8 (2.93) & 42.7 (2.95) & 40.0 (5.13) & 39.8 (5.16) & 40.0 (5.15) & 39.8 (5.17)\\
-\hspace{1em}1000 & 43.5 (2.93) & 43.5 (2.94) & 41.0 (4.73) & 40.8 (4.78) & 41.0 (4.73) & 40.8 (4.78)\\
-\hspace{1em}5000 & 44.3 (3.00) & 44.1 (3.00) & 42.0 (4.36) & 41.8 (4.49) & 42.0 (4.36) & 41.8 (4.49)\\
+\hspace{1em}100 & 38 (3.4) & 38 (3.4) & 33 (6.5) & 33 (6.8) & 33 (6.6) & 33 (6.8)\\
+\hspace{1em}500 & 43 (2.9) & 43 (3.0) & 40 (5.1) & 40 (5.2) & 40 (5.2) & 40 (5.2)\\
+\hspace{1em}1000 & 44 (2.9) & 43 (2.9) & 41 (4.7) & 41 (4.8) & 41 (4.7) & 41 (4.8)\\
+\hspace{1em}5000 & 44 (3.0) & 44 (3.0) & 42 (4.4) & 42 (4.5) & 42 (4.4) & 42 (4.5)\\
 \addlinespace[0.75em]
 \multicolumn{7}{l}{\textbf{10 predictors, 40 junk}}\\
 \hline
-\hspace{1em}100 & 34.5 (3.79) & 34.5 (3.72) & 30.5 (6.80) & 30.5 (6.58) & 30.5 (6.86) & 30.5 (6.62)\\
-\hspace{1em}500 & 40.6 (2.76) & 40.6 (2.76) & 38.3 (4.61) & 38.2 (4.70) & 38.3 (4.63) & 38.2 (4.71)\\
-\hspace{1em}1000 & 41.5 (2.73) & 41.5 (2.74) & 39.3 (4.57) & 39.2 (4.61) & 39.3 (4.57) & 39.2 (4.60)\\
-\hspace{1em}5000 & 42.6 (2.74) & 42.5 (2.74) & 40.6 (4.21) & 40.5 (4.25) & 40.6 (4.21) & 40.5 (4.26)\\
+\hspace{1em}100 & 35 (3.8) & 35 (3.7) & 31 (6.8) & 31 (6.6) & 30 (6.9) & 30 (6.6)\\
+\hspace{1em}500 & 41 (2.8) & 41 (2.8) & 38 (4.6) & 38 (4.7) & 38 (4.6) & 38 (4.7)\\
+\hspace{1em}1000 & 42 (2.7) & 42 (2.7) & 39 (4.6) & 39 (4.6) & 39 (4.6) & 39 (4.6)\\
+\hspace{1em}5000 & 43 (2.7) & 43 (2.7) & 41 (4.2) & 40 (4.3) & 41 (4.2) & 40 (4.3)\\
 \addlinespace[0.75em]
 \multicolumn{7}{l}{\textbf{10 predictors, 490 junk}}\\
 \hline
-\hspace{1em}100 & 27.6 (5.08) & 27.7 (5.02) & 23.3 (6.58) & 23.3 (6.45) & 23.4 (6.46) & 23.3 (6.45)\\
-\hspace{1em}500 & 37.5 (2.93) & 37.5 (2.92) & 35.8 (4.07) & 35.9 (4.04) & 35.8 (4.06) & 35.9 (4.05)\\
-\hspace{1em}1000 & 38.8 (2.83) & 38.8 (2.83) & 37.2 (4.34) & 37.2 (4.33) & 37.2 (4.35) & 37.2 (4.34)\\
-\hspace{1em}5000 & 39.8 (2.78) & 39.8 (2.79) & 38.6 (4.01) & 38.6 (3.93) & 38.6 (3.99) & 38.6 (3.94)\\
+\hspace{1em}100 & 28 (5.1) & 28 (5.0) & 23 (6.6) & 23 (6.4) & 23 (6.5) & 23 (6.5)\\
+\hspace{1em}500 & 38 (2.9) & 38 (2.9) & 36 (4.1) & 36 (4.0) & 36 (4.1) & 36 (4.0)\\
+\hspace{1em}1000 & 39 (2.8) & 39 (2.8) & 37 (4.3) & 37 (4.3) & 37 (4.4) & 37 (4.3)\\
+\hspace{1em}5000 & 40 (2.8) & 40 (2.8) & 39 (4.0) & 39 (3.9) & 39 (4.0) & 39 (3.9)\\
 \addlinespace[0.75em]
 \multicolumn{7}{l}{\textbf{Overall}}\\
 \hline
-\hspace{1em}--- & 39.3 (5.50) & 39.3 (5.45) & 36.7 (7.22) & 36.6 (7.21) & 36.7 (7.21) & 36.6 (7.21)\\
+\hspace{1em}NA & 39 (5.5) & 39 (5.4) & 37 (7.2) & 37 (7.2) & 37 (7.2) & 37 (7.2)\\
 \bottomrule
 \multicolumn{7}{l}{\textsuperscript{} All values are scaled by 100 for convenience}\\
 \end{tabular}
@@ -732,28 +759,28 @@ N & MAR & MCAR & MAR & MCAR & MAR & MCAR\\
 \addlinespace[0.75em]
 \multicolumn{7}{l}{\textbf{10 predictors, 10 junk}}\\
 \hline
-\hspace{1em}100 & 1.20 (1.02) & 1.18 (0.98) & 2.39 (1.71) & 2.42 (1.72) & 1.82 (1.49) & 1.83 (1.47)\\
-\hspace{1em}1000 & 0.21 (0.19) & 0.21 (0.20) & 1.19 (1.06) & 1.25 (1.15) & 0.62 (0.82) & 0.64 (0.88)\\
-\hspace{1em}500 & 0.31 (0.29) & 0.33 (0.29) & 1.32 (1.08) & 1.38 (1.15) & 0.74 (0.86) & 0.76 (0.89)\\
-\hspace{1em}5000 & 0.09 (0.08) & 0.09 (0.09) & 1.02 (0.89) & 1.08 (1.00) & 0.48 (0.76) & 0.50 (0.82)\\
+\hspace{1em}100 & 1.2 (1.0) & 1.2 (0.98) & 2.4 (1.7) & 2.4 (1.7) & 1.8 (1.5) & 1.8 (1.5)\\
+\hspace{1em}500 & 0.31 (0.29) & 0.33 (0.29) & 1.3 (1.1) & 1.4 (1.2) & 0.74 (0.86) & 0.76 (0.89)\\
+\hspace{1em}1000 & 0.21 (0.19) & 0.21 (0.20) & 1.2 (1.1) & 1.3 (1.1) & 0.62 (0.82) & 0.64 (0.88)\\
+\hspace{1em}5000 & 0.09 (0.08) & 0.09 (0.09) & 1.0 (0.89) & 1.1 (1.0) & 0.48 (0.76) & 0.50 (0.82)\\
 \addlinespace[0.75em]
 \multicolumn{7}{l}{\textbf{10 predictors, 40 junk}}\\
 \hline
-\hspace{1em}100 & 1.48 (1.26) & 1.48 (1.29) & 2.67 (1.91) & 2.68 (1.92) & 2.13 (1.72) & 2.15 (1.71)\\
-\hspace{1em}1000 & 0.22 (0.20) & 0.22 (0.20) & 1.25 (1.10) & 1.31 (1.18) & 0.65 (0.90) & 0.67 (0.95)\\
-\hspace{1em}500 & 0.34 (0.30) & 0.34 (0.29) & 1.38 (1.20) & 1.43 (1.26) & 0.76 (0.92) & 0.79 (0.98)\\
-\hspace{1em}5000 & 0.09 (0.09) & 0.10 (0.09) & 1.13 (1.01) & 1.21 (1.13) & 0.52 (0.83) & 0.55 (0.90)\\
+\hspace{1em}100 & 1.5 (1.3) & 1.5 (1.3) & 2.7 (1.9) & 2.7 (1.9) & 2.1 (1.7) & 2.2 (1.7)\\
+\hspace{1em}500 & 0.34 (0.30) & 0.34 (0.29) & 1.4 (1.2) & 1.4 (1.3) & 0.76 (0.92) & 0.79 (0.98)\\
+\hspace{1em}1000 & 0.22 (0.20) & 0.22 (0.20) & 1.3 (1.1) & 1.3 (1.2) & 0.65 (0.90) & 0.67 (0.95)\\
+\hspace{1em}5000 & 0.09 (0.09) & 0.10 (0.09) & 1.1 (1.0) & 1.2 (1.1) & 0.52 (0.83) & 0.55 (0.90)\\
 \addlinespace[0.75em]
 \multicolumn{7}{l}{\textbf{10 predictors, 490 junk}}\\
 \hline
-\hspace{1em}100 & 2.13 (1.74) & 2.00 (1.64) & 3.00 (2.16) & 3.00 (2.14) & 2.60 (1.93) & 2.67 (2.00)\\
-\hspace{1em}1000 & 0.21 (0.19) & 0.22 (0.19) & 1.14 (1.17) & 1.13 (1.14) & 0.59 (0.89) & 0.58 (0.87)\\
-\hspace{1em}500 & 0.35 (0.30) & 0.34 (0.29) & 1.22 (1.13) & 1.20 (1.11) & 0.70 (0.91) & 0.70 (0.90)\\
-\hspace{1em}5000 & 0.09 (0.08) & 0.09 (0.08) & 1.11 (1.06) & 1.16 (1.13) & 0.50 (0.85) & 0.52 (0.90)\\
+\hspace{1em}100 & 2.1 (1.7) & 2.0 (1.6) & 3.0 (2.2) & 3.0 (2.1) & 2.6 (1.9) & 2.7 (2.0)\\
+\hspace{1em}500 & 0.35 (0.30) & 0.34 (0.29) & 1.2 (1.1) & 1.2 (1.1) & 0.70 (0.91) & 0.70 (0.90)\\
+\hspace{1em}1000 & 0.21 (0.19) & 0.22 (0.19) & 1.1 (1.2) & 1.1 (1.1) & 0.59 (0.89) & 0.58 (0.87)\\
+\hspace{1em}5000 & 0.09 (0.08) & 0.09 (0.08) & 1.1 (1.1) & 1.2 (1.1) & 0.50 (0.85) & 0.52 (0.90)\\
 \addlinespace[0.75em]
 \multicolumn{7}{l}{\textbf{Overall}}\\
 \hline
-\hspace{1em}--- & 0.56 (0.95) & 0.55 (0.92) & 1.57 (1.50) & 1.60 (1.53) & 1.01 (1.34) & 1.03 (1.37)\\
+\hspace{1em}NA & 0.56 (0.95) & 0.55 (0.92) & 1.6 (1.5) & 1.6 (1.5) & 1.0 (1.3) & 1.0 (1.4)\\
 \bottomrule
 \multicolumn{7}{l}{\textsuperscript{} All values are scaled by 100 for convenience}\\
 \end{tabular}
@@ -774,28 +801,28 @@ N & $\texttt{CV}\!\circlearrowright\!\texttt{I}$& $\texttt{I}\!\!\rightarrow\!\t
 \addlinespace[0.75em]
 \multicolumn{13}{l}{\textbf{10 predictors, 10 junk}}\\
 \hline
-\hspace{1em}100 & 0.41 & -0.37 & 0.84 & -1.33 & 0.06 & -1.45 & 0.59 & -0.21 & 1.11 & -1.03 & 0.30 & -1.19\\
-\hspace{1em}500 & 0.14 & 0.04 & 0.20 & -1.11 & -0.55 & -1.16 & 0.16 & 0.07 & 0.35 & -0.90 & -0.38 & -0.96\\
-\hspace{1em}1000 & 0.09 & 0.04 & 0.21 & -1.01 & -0.52 & -1.06 & 0.08 & 0.03 & 0.33 & -0.82 & -0.37 & -0.88\\
+\hspace{1em}100 & 0.41 & -0.37 & 0.84 & -1.3 & 0.06 & -1.4 & 0.59 & -0.21 & 1.1 & -1.0 & 0.30 & -1.2\\
+\hspace{1em}500 & 0.14 & 0.04 & 0.20 & -1.1 & -0.55 & -1.2 & 0.16 & 0.07 & 0.35 & -0.90 & -0.38 & -0.96\\
+\hspace{1em}1000 & 0.09 & 0.04 & 0.21 & -1.0 & -0.52 & -1.1 & 0.08 & 0.03 & 0.33 & -0.82 & -0.37 & -0.88\\
 \hspace{1em}5000 & -0.02 & -0.02 & 0.12 & -0.96 & -0.55 & -0.99 & 0.00 & -0.01 & 0.27 & -0.75 & -0.36 & -0.79\\
 \addlinespace[0.75em]
 \multicolumn{13}{l}{\textbf{10 predictors, 40 junk}}\\
 \hline
-\hspace{1em}100 & 0.64 & -0.52 & 1.02 & -1.45 & 0.27 & -1.65 & 0.86 & -0.32 & 1.26 & -1.20 & 0.44 & -1.42\\
+\hspace{1em}100 & 0.64 & -0.52 & 1.0 & -1.5 & 0.27 & -1.6 & 0.86 & -0.32 & 1.3 & -1.2 & 0.44 & -1.4\\
 \hspace{1em}500 & 0.23 & 0.09 & 0.53 & -0.82 & -0.23 & -0.87 & 0.27 & 0.13 & 0.66 & -0.64 & -0.09 & -0.70\\
-\hspace{1em}1000 & 0.10 & 0.03 & 0.14 & -1.13 & -0.59 & -1.17 & 0.10 & 0.03 & 0.19 & -1.02 & -0.51 & -1.06\\
-\hspace{1em}5000 & 0.07 & 0.04 & 0.08 & -1.13 & -0.63 & -1.14 & 0.06 & 0.04 & 0.14 & -0.99 & -0.53 & -1.01\\
+\hspace{1em}1000 & 0.10 & 0.03 & 0.14 & -1.1 & -0.59 & -1.2 & 0.10 & 0.03 & 0.19 & -1.0 & -0.51 & -1.1\\
+\hspace{1em}5000 & 0.07 & 0.04 & 0.08 & -1.1 & -0.63 & -1.1 & 0.06 & 0.04 & 0.14 & -0.99 & -0.53 & -1.0\\
 \addlinespace[0.75em]
 \multicolumn{13}{l}{\textbf{10 predictors, 490 junk}}\\
 \hline
-\hspace{1em}100 & 1.11 & -0.69 & 1.44 & -1.43 & 1.04 & -1.49 & 1.04 & -0.90 & 1.36 & -1.51 & 0.96 & -1.49\\
+\hspace{1em}100 & 1.1 & -0.69 & 1.4 & -1.4 & 1.0 & -1.5 & 1.0 & -0.90 & 1.4 & -1.5 & 0.96 & -1.5\\
 \hspace{1em}500 & 0.24 & 0.10 & 0.37 & -0.68 & -0.19 & -0.71 & 0.37 & 0.21 & 0.49 & -0.57 & -0.08 & -0.60\\
 \hspace{1em}1000 & 0.15 & 0.08 & 0.20 & -0.85 & -0.42 & -0.88 & 0.32 & 0.25 & 0.38 & -0.67 & -0.24 & -0.71\\
 \hspace{1em}5000 & 0.00 & -0.02 & 0.31 & -0.84 & -0.39 & -0.86 & 0.05 & 0.03 & 0.29 & -0.80 & -0.36 & -0.82\\
 \addlinespace[0.75em]
 \multicolumn{13}{l}{\textbf{Overall}}\\
 \hline
-\hspace{1em}--- & 0.26 & -0.10 & 0.45 & -1.06 & -0.22 & -1.12 & 0.33 & -0.06 & 0.57 & -0.91 & -0.10 & -0.97\\
+\hspace{1em}--- & 0.26 & -0.10 & 0.45 & -1.1 & -0.22 & -1.1 & 0.33 & -0.06 & 0.57 & -0.91 & -0.10 & -0.97\\
 \bottomrule
 \multicolumn{13}{l}{\textsuperscript{} All values are scaled by 100 for convenience}\\
 \end{tabular}
@@ -816,28 +843,28 @@ N & $\texttt{CV}\!\circlearrowright\!\texttt{I}$& $\texttt{I}\!\!\rightarrow\!\t
 \addlinespace[0.75em]
 \multicolumn{13}{l}{\textbf{10 predictors, 10 junk}}\\
 \hline
-\hspace{1em}100 & 6.52 & 6.47 & 7.41 & 7.00 & 7.22 & 6.92 & 6.49 & 6.44 & 7.37 & 7.04 & 7.23 & 6.95\\
-\hspace{1em}500 & 3.60 & 3.65 & 3.99 & 3.90 & 3.94 & 3.89 & 3.59 & 3.64 & 3.99 & 3.90 & 3.95 & 3.89\\
-\hspace{1em}1000 & 3.33 & 3.36 & 3.70 & 3.57 & 3.62 & 3.56 & 3.32 & 3.35 & 3.67 & 3.56 & 3.60 & 3.55\\
-\hspace{1em}5000 & 3.08 & 3.10 & 3.38 & 3.27 & 3.36 & 3.27 & 3.06 & 3.08 & 3.35 & 3.26 & 3.34 & 3.26\\
+\hspace{1em}100 & 6.5 & 6.5 & 7.4 & 7.0 & 7.2 & 6.9 & 6.5 & 6.4 & 7.4 & 7.0 & 7.2 & 7.0\\
+\hspace{1em}500 & 3.6 & 3.6 & 4.0 & 3.9 & 3.9 & 3.9 & 3.6 & 3.6 & 4.0 & 3.9 & 3.9 & 3.9\\
+\hspace{1em}1000 & 3.3 & 3.4 & 3.7 & 3.6 & 3.6 & 3.6 & 3.3 & 3.4 & 3.7 & 3.6 & 3.6 & 3.6\\
+\hspace{1em}5000 & 3.1 & 3.1 & 3.4 & 3.3 & 3.4 & 3.3 & 3.1 & 3.1 & 3.3 & 3.3 & 3.3 & 3.3\\
 \addlinespace[0.75em]
 \multicolumn{13}{l}{\textbf{10 predictors, 40 junk}}\\
 \hline
-\hspace{1em}100 & 6.76 & 6.63 & 7.23 & 6.85 & 7.07 & 6.80 & 6.66 & 6.57 & 7.21 & 6.84 & 7.08 & 6.77\\
-\hspace{1em}500 & 3.53 & 3.57 & 3.75 & 3.65 & 3.68 & 3.65 & 3.55 & 3.59 & 3.73 & 3.65 & 3.70 & 3.66\\
-\hspace{1em}1000 & 3.13 & 3.16 & 3.28 & 3.21 & 3.27 & 3.21 & 3.14 & 3.17 & 3.25 & 3.20 & 3.25 & 3.20\\
-\hspace{1em}5000 & 2.82 & 2.83 & 3.00 & 2.88 & 2.96 & 2.88 & 2.81 & 2.83 & 2.96 & 2.88 & 2.95 & 2.88\\
+\hspace{1em}100 & 6.8 & 6.6 & 7.2 & 6.8 & 7.1 & 6.8 & 6.7 & 6.6 & 7.2 & 6.8 & 7.1 & 6.8\\
+\hspace{1em}500 & 3.5 & 3.6 & 3.7 & 3.6 & 3.7 & 3.6 & 3.5 & 3.6 & 3.7 & 3.6 & 3.7 & 3.7\\
+\hspace{1em}1000 & 3.1 & 3.2 & 3.3 & 3.2 & 3.3 & 3.2 & 3.1 & 3.2 & 3.2 & 3.2 & 3.3 & 3.2\\
+\hspace{1em}5000 & 2.8 & 2.8 & 3.0 & 2.9 & 3.0 & 2.9 & 2.8 & 2.8 & 3.0 & 2.9 & 2.9 & 2.9\\
 \addlinespace[0.75em]
 \multicolumn{13}{l}{\textbf{10 predictors, 490 junk}}\\
 \hline
-\hspace{1em}100 & 7.67 & 7.44 & 7.96 & 7.56 & 7.88 & 7.52 & 7.58 & 7.34 & 8.00 & 7.65 & 7.91 & 7.57\\
-\hspace{1em}500 & 3.68 & 3.72 & 3.86 & 3.80 & 3.86 & 3.80 & 3.69 & 3.72 & 3.84 & 3.78 & 3.85 & 3.79\\
-\hspace{1em}1000 & 3.25 & 3.27 & 3.27 & 3.20 & 3.26 & 3.20 & 3.25 & 3.28 & 3.29 & 3.23 & 3.29 & 3.23\\
-\hspace{1em}5000 & 2.86 & 2.87 & 2.93 & 2.87 & 2.93 & 2.87 & 2.86 & 2.87 & 2.91 & 2.88 & 2.93 & 2.88\\
+\hspace{1em}100 & 7.7 & 7.4 & 8.0 & 7.6 & 7.9 & 7.5 & 7.6 & 7.3 & 8.0 & 7.6 & 7.9 & 7.6\\
+\hspace{1em}500 & 3.7 & 3.7 & 3.9 & 3.8 & 3.9 & 3.8 & 3.7 & 3.7 & 3.8 & 3.8 & 3.8 & 3.8\\
+\hspace{1em}1000 & 3.3 & 3.3 & 3.3 & 3.2 & 3.3 & 3.2 & 3.3 & 3.3 & 3.3 & 3.2 & 3.3 & 3.2\\
+\hspace{1em}5000 & 2.9 & 2.9 & 2.9 & 2.9 & 2.9 & 2.9 & 2.9 & 2.9 & 2.9 & 2.9 & 2.9 & 2.9\\
 \addlinespace[0.75em]
 \multicolumn{13}{l}{\textbf{Overall}}\\
 \hline
-\hspace{1em}--- & 6.50 & 6.12 & 7.30 & 6.76 & 7.30 & 6.73 & 6.52 & 6.12 & 7.31 & 6.77 & 7.29 & 6.73\\
+\hspace{1em}--- & 6.5 & 6.1 & 7.3 & 6.8 & 7.3 & 6.7 & 6.5 & 6.1 & 7.3 & 6.8 & 7.3 & 6.7\\
 \bottomrule
 \multicolumn{13}{l}{\textsuperscript{} All values are scaled by 100 for convenience}\\
 \end{tabular}
@@ -858,28 +885,28 @@ N & $\texttt{CV}\!\circlearrowright\!\texttt{I}$& $\texttt{I}\!\!\rightarrow\!\t
 \addlinespace[0.75em]
 \multicolumn{13}{l}{\textbf{10 predictors, 10 junk}}\\
 \hline
-\hspace{1em}100 & 5.97 & 5.87 & 9.08 & 8.84 & 8.87 & 8.78 & 5.91 & 5.76 & 8.80 & 8.54 & 8.61 & 8.50\\
-\hspace{1em}500 & 2.23 & 2.22 & 5.09 & 5.03 & 5.06 & 5.04 & 2.18 & 2.18 & 5.07 & 4.97 & 5.03 & 5.00\\
-\hspace{1em}1000 & 1.65 & 1.65 & 4.29 & 4.18 & 4.19 & 4.19 & 1.65 & 1.66 & 4.24 & 4.12 & 4.14 & 4.13\\
-\hspace{1em}5000 & 0.82 & 0.82 & 3.50 & 3.47 & 3.49 & 3.48 & 0.81 & 0.81 & 3.33 & 3.27 & 3.31 & 3.28\\
+\hspace{1em}100 & 6.0 & 5.9 & 9.1 & 8.8 & 8.9 & 8.8 & 5.9 & 5.8 & 8.8 & 8.5 & 8.6 & 8.5\\
+\hspace{1em}500 & 2.2 & 2.2 & 5.1 & 5.0 & 5.1 & 5.0 & 2.2 & 2.2 & 5.1 & 5.0 & 5.0 & 5.0\\
+\hspace{1em}1000 & 1.7 & 1.6 & 4.3 & 4.2 & 4.2 & 4.2 & 1.7 & 1.7 & 4.2 & 4.1 & 4.1 & 4.1\\
+\hspace{1em}5000 & 0.82 & 0.82 & 3.5 & 3.5 & 3.5 & 3.5 & 0.81 & 0.81 & 3.3 & 3.3 & 3.3 & 3.3\\
 \addlinespace[0.75em]
 \multicolumn{13}{l}{\textbf{10 predictors, 40 junk}}\\
 \hline
-\hspace{1em}100 & 6.41 & 6.28 & 8.99 & 8.74 & 8.86 & 8.79 & 6.44 & 6.33 & 9.16 & 8.86 & 9.08 & 8.93\\
-\hspace{1em}500 & 2.33 & 2.33 & 4.84 & 4.68 & 4.72 & 4.68 & 2.32 & 2.31 & 4.75 & 4.56 & 4.63 & 4.58\\
-\hspace{1em}1000 & 1.67 & 1.66 & 4.33 & 4.32 & 4.29 & 4.32 & 1.68 & 1.69 & 4.29 & 4.27 & 4.25 & 4.27\\
-\hspace{1em}5000 & 0.83 & 0.83 & 3.67 & 3.61 & 3.64 & 3.62 & 0.81 & 0.81 & 3.56 & 3.50 & 3.54 & 3.51\\
+\hspace{1em}100 & 6.4 & 6.3 & 9.0 & 8.7 & 8.9 & 8.8 & 6.4 & 6.3 & 9.2 & 8.9 & 9.1 & 8.9\\
+\hspace{1em}500 & 2.3 & 2.3 & 4.8 & 4.7 & 4.7 & 4.7 & 2.3 & 2.3 & 4.8 & 4.6 & 4.6 & 4.6\\
+\hspace{1em}1000 & 1.7 & 1.7 & 4.3 & 4.3 & 4.3 & 4.3 & 1.7 & 1.7 & 4.3 & 4.3 & 4.3 & 4.3\\
+\hspace{1em}5000 & 0.83 & 0.83 & 3.7 & 3.6 & 3.6 & 3.6 & 0.81 & 0.81 & 3.6 & 3.5 & 3.5 & 3.5\\
 \addlinespace[0.75em]
 \multicolumn{13}{l}{\textbf{10 predictors, 490 junk}}\\
 \hline
-\hspace{1em}100 & 7.29 & 7.22 & 9.01 & 8.86 & 8.93 & 8.89 & 7.30 & 7.28 & 9.10 & 8.98 & 8.85 & 8.80\\
-\hspace{1em}500 & 2.43 & 2.42 & 4.18 & 4.05 & 4.13 & 4.06 & 2.41 & 2.39 & 4.14 & 4.00 & 4.06 & 3.99\\
-\hspace{1em}1000 & 1.76 & 1.74 & 3.99 & 3.87 & 3.94 & 3.89 & 1.75 & 1.74 & 4.01 & 3.84 & 3.94 & 3.87\\
-\hspace{1em}5000 & 0.85 & 0.85 & 3.23 & 3.10 & 3.16 & 3.11 & 0.86 & 0.86 & 3.31 & 3.19 & 3.23 & 3.17\\
+\hspace{1em}100 & 7.3 & 7.2 & 9.0 & 8.9 & 8.9 & 8.9 & 7.3 & 7.3 & 9.1 & 9.0 & 8.9 & 8.8\\
+\hspace{1em}500 & 2.4 & 2.4 & 4.2 & 4.1 & 4.1 & 4.1 & 2.4 & 2.4 & 4.1 & 4.0 & 4.1 & 4.0\\
+\hspace{1em}1000 & 1.8 & 1.7 & 4.0 & 3.9 & 3.9 & 3.9 & 1.8 & 1.7 & 4.0 & 3.8 & 3.9 & 3.9\\
+\hspace{1em}5000 & 0.85 & 0.85 & 3.2 & 3.1 & 3.2 & 3.1 & 0.86 & 0.86 & 3.3 & 3.2 & 3.2 & 3.2\\
 \addlinespace[0.75em]
 \multicolumn{13}{l}{\textbf{Overall}}\\
 \hline
-\hspace{1em}--- & 3.61 & 3.57 & 5.78 & 5.64 & 5.69 & 5.65 & 3.61 & 3.57 & 5.75 & 5.61 & 5.65 & 5.59\\
+\hspace{1em}--- & 3.6 & 3.6 & 5.8 & 5.6 & 5.7 & 5.7 & 3.6 & 3.6 & 5.8 & 5.6 & 5.6 & 5.6\\
 \bottomrule
 \multicolumn{13}{l}{\textsuperscript{} All values are scaled by 100 for convenience}\\
 \end{tabular}
@@ -900,28 +927,28 @@ N & $\texttt{CV}\!\circlearrowright\!\texttt{I}$& $\texttt{I}\!\!\rightarrow\!\t
 \addlinespace[0.75em]
 \multicolumn{13}{l}{\textbf{10 predictors, 10 junk}}\\
 \hline
-\hspace{1em}100 & 38.2 & 38.2 & 33.9 & 33.9 & 34.0 & 34.0 & 38.4 & 38.3 & 34.1 & 34.1 & 34.1 & 34.1\\
-\hspace{1em}500 & 43.8 & 43.8 & 40.7 & 40.8 & 40.8 & 40.8 & 43.9 & 43.9 & 40.9 & 41.0 & 41.0 & 41.0\\
-\hspace{1em}1000 & 44.8 & 44.8 & 42.0 & 42.0 & 42.0 & 42.0 & 44.9 & 44.9 & 42.1 & 42.2 & 42.1 & 42.2\\
-\hspace{1em}5000 & 45.7 & 45.7 & 43.3 & 43.3 & 43.3 & 43.3 & 45.8 & 45.8 & 43.5 & 43.5 & 43.5 & 43.5\\
+\hspace{1em}100 & 38 & 38 & 34 & 34 & 34 & 34 & 38 & 38 & 34 & 34 & 34 & 34\\
+\hspace{1em}500 & 44 & 44 & 41 & 41 & 41 & 41 & 44 & 44 & 41 & 41 & 41 & 41\\
+\hspace{1em}1000 & 45 & 45 & 42 & 42 & 42 & 42 & 45 & 45 & 42 & 42 & 42 & 42\\
+\hspace{1em}5000 & 46 & 46 & 43 & 43 & 43 & 43 & 46 & 46 & 43 & 44 & 44 & 44\\
 \addlinespace[0.75em]
 \multicolumn{13}{l}{\textbf{10 predictors, 40 junk}}\\
 \hline
-\hspace{1em}100 & 35.1 & 35.0 & 31.0 & 31.0 & 31.0 & 31.0 & 35.1 & 35.0 & 31.0 & 30.8 & 31.0 & 30.9\\
-\hspace{1em}500 & 41.8 & 41.8 & 39.2 & 39.2 & 39.2 & 39.2 & 41.8 & 41.8 & 39.2 & 39.3 & 39.3 & 39.3\\
-\hspace{1em}1000 & 42.8 & 42.8 & 40.3 & 40.3 & 40.3 & 40.3 & 42.8 & 42.8 & 40.4 & 40.4 & 40.4 & 40.4\\
-\hspace{1em}5000 & 44.0 & 44.0 & 41.8 & 41.8 & 41.8 & 41.8 & 44.0 & 44.0 & 41.9 & 41.9 & 41.9 & 41.9\\
+\hspace{1em}100 & 35 & 35 & 31 & 31 & 31 & 31 & 35 & 35 & 31 & 31 & 31 & 31\\
+\hspace{1em}500 & 42 & 42 & 39 & 39 & 39 & 39 & 42 & 42 & 39 & 39 & 39 & 39\\
+\hspace{1em}1000 & 43 & 43 & 40 & 40 & 40 & 40 & 43 & 43 & 40 & 40 & 40 & 40\\
+\hspace{1em}5000 & 44 & 44 & 42 & 42 & 42 & 42 & 44 & 44 & 42 & 42 & 42 & 42\\
 \addlinespace[0.75em]
 \multicolumn{13}{l}{\textbf{10 predictors, 490 junk}}\\
 \hline
-\hspace{1em}100 & 28.9 & 28.6 & 24.0 & 23.7 & 24.0 & 23.6 & 28.7 & 28.5 & 24.0 & 23.8 & 24.2 & 23.9\\
-\hspace{1em}500 & 39.1 & 39.1 & 37.2 & 37.3 & 37.2 & 37.3 & 39.1 & 39.1 & 37.2 & 37.2 & 37.2 & 37.3\\
-\hspace{1em}1000 & 40.4 & 40.4 & 38.7 & 38.7 & 38.7 & 38.7 & 40.4 & 40.4 & 38.7 & 38.7 & 38.7 & 38.7\\
-\hspace{1em}5000 & 41.5 & 41.5 & 40.2 & 40.2 & 40.2 & 40.2 & 41.5 & 41.5 & 40.2 & 40.2 & 40.2 & 40.2\\
+\hspace{1em}100 & 29 & 29 & 24 & 24 & 24 & 24 & 29 & 28 & 24 & 24 & 24 & 24\\
+\hspace{1em}500 & 39 & 39 & 37 & 37 & 37 & 37 & 39 & 39 & 37 & 37 & 37 & 37\\
+\hspace{1em}1000 & 40 & 40 & 39 & 39 & 39 & 39 & 40 & 40 & 39 & 39 & 39 & 39\\
+\hspace{1em}5000 & 41 & 41 & 40 & 40 & 40 & 40 & 41 & 41 & 40 & 40 & 40 & 40\\
 \addlinespace[0.75em]
 \multicolumn{13}{l}{\textbf{Overall}}\\
 \hline
-\hspace{1em}--- & 40.5 & 40.5 & 37.7 & 37.7 & 37.7 & 37.7 & 40.5 & 40.5 & 37.8 & 37.8 & 37.8 & 37.8\\
+\hspace{1em}--- & 41 & 40 & 38 & 38 & 38 & 38 & 41 & 41 & 38 & 38 & 38 & 38\\
 \bottomrule
 \multicolumn{13}{l}{\textsuperscript{} All values are scaled by 100 for convenience}\\
 \end{tabular}

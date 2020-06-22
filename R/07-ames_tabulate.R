@@ -4,7 +4,7 @@ library(tblStrings)
 
 # TODO: make standard errors instead of standard deviation
 
-ames_init <- read_rds('results/06-ames_clean.rds')
+ames_init <- read_rds('results_raw/06-ames_clean.rds')
 
 ames_nsims <- nrow(ames_init)
 
@@ -64,12 +64,17 @@ ames_variance <- ames_clean %>%
 bias_smry <- ames_bias %>% 
   pivot_wider(values_from = value, names_from = metric) %>% 
   transmute(measure, model, type, 
-    tbv = tbl_string("{mn} ({sd})")) %>% 
+    tbv = tbl_string("{mn} ({sd})", decimals_0_to_1 = 4)) %>% 
   pivot_wider(values_from = tbv, names_from = type)
 
 variance_smry <- ames_variance %>% 
   pivot_wider(names_from = type, values_from = value) %>% 
-  mutate(across(c(icv, cvi), ~tbl_val(100*.x, max_decimals = 3)))
+  mutate(
+    across(
+      .cols = c(icv, cvi),
+      .fns = ~tbl_val(.x, decimals_0_to_1 = 4)
+    )
+  )
 
 estimate_smry <- ames_clean %>%
   drop_na() %>% 
@@ -126,15 +131,22 @@ tuned_rows <- cv_methods %>%
 
 ames$tuned_smry <- tuned_rows %>% 
   summarize(across(c(cvi, icv), 
-    ~tbl_string("{mean(.x)} ({sd(.x)})", max_decimals = 3))) %>% 
+    ~tbl_string("{mean(.x)} ({sd(.x)})", decimals_0_to_1 = 3))) %>% 
   pivot_wider(names_from = model, values_from = c(cvi, icv))
+
+ames$tuned_cmpr <- tuned_rows %>% 
+  summarize(
+    cvi_over_icv = tbl_string(
+      "{100 * (1 - mean(cvi)/mean(icv))}%", 
+      decimals_0_to_1 = 4)
+  )
 
 ames$tuned_diffs <- tuned_rows %>% 
   summarise(diff = mean(cvi-icv)) %>% 
   deframe() %>% 
   as.list()
 
-write_rds(ames, 'results/07-ames_tabulate.rds')
+write_rds(ames, 'analysis/results/07-ames_tabulate.rds')
 
 # ames_clean %>% 
 #   pivot_longer(cols = matches('^ext|^icv|^cvi')) %>% 
