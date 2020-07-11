@@ -9,6 +9,7 @@ library(kableExtra)
 
 sim_full <- read_rds('results_raw/02-sim_clean.rds') 
 
+tbs_decimals <- c(2, 2, 1)
 
 # general footnote for tables
 mse_source_note <- 'All values are scaled by 100 for convenience'
@@ -125,7 +126,7 @@ cmp_times_diffs <- cmp_times %>%
 
 cmp_times_smry <- cmp_times_diffs %>% 
   group_by(key, nobs, ncov, action) %>% 
-  summarize(
+  summarise(
     diff_raw_mn = mean(diff_raw),
     diff_raw_sd = sd(diff_raw),
     diff_rel_mn = mean(diff_rel),
@@ -137,7 +138,7 @@ cmp_times_smry <- cmp_times_diffs %>%
 
 cmp_times_overall <- cmp_times_diffs %>% 
   group_by(key, action) %>% 
-  summarize(
+  summarise(
     diff_raw_mn = mean(diff_raw),
     diff_raw_sd = sd(diff_raw),
     diff_rel_mn = mean(diff_rel),
@@ -159,7 +160,8 @@ kbl_mse <- mse_smry %>%
     key, 
     nobs = factor(nobs, levels = c(100, 500, 1000, 5000)), 
     ncov, 
-    external = tbl_string("{100*external_mn} ({100*external_sd})")
+    external = tbl_string("{100*external_mn} ({100*external_sd})",
+      decimals = tbs_decimals)
   ) %>% 
   pivot_wider(names_from = key, values_from = external) 
 
@@ -168,13 +170,15 @@ kbl_cv_diffs <- mse_smry %>%
     key, 
     nobs = factor(nobs, levels = c(100, 500, 1000, 5000)), 
     ncov, 
-    cv_diffs = tbl_string("{100*abs_diff_mn} ({100*abs_diff_sd})")
+    cv_diffs = tbl_string("{100*abs_diff_mn} ({100*abs_diff_sd})",
+      decimals = tbs_decimals)
   ) %>% 
   pivot_wider(names_from = key, values_from = cv_diffs) %>% 
   arrange(ncov, nobs)
   
 kbl_df_cmp <- cmp_times_smry %>% 
-  mutate(diff_rel = tbl_string("{diff_rel_mn} ({diff_rel_sd})")) %>% 
+  mutate(diff_rel = tbl_string("{diff_rel_mn} ({diff_rel_sd})",
+    decimals = tbs_decimals)) %>% 
   select(key, nobs, ncov, action, diff_rel) %>%
   pivot_wider(names_from = c(action, key), values_from = diff_rel)  %>% 
   arrange(ncov, nobs)
@@ -267,7 +271,7 @@ tabulate_errors <- function(
   
   if(needs_rounding){
     out_df <- out_df %>% 
-      mutate_at(vars(contains('..')), tbl_val)
+      mutate_at(vars(contains('..')), tbl_val, decimals = tbs_decimals)
   }
   
    out_df %>% 

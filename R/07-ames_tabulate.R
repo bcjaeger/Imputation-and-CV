@@ -72,7 +72,7 @@ variance_smry <- ames_variance %>%
   mutate(
     across(
       .cols = c(icv, cvi),
-      .fns = ~tbl_val(.x, decimals_0_to_1 = 4)
+      .fns = ~tbl_val(.x, decimals = c(2,2,1))
     )
   )
 
