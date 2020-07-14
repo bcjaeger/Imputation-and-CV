@@ -1,0 +1,20 @@
+## library() calls go here
+library(conflicted)
+library(dotenv)
+library(drake)
+library(tidyverse)
+library(yardstick)
+library(magrittr)
+library(tblStrings)
+library(knitr)
+library(kableExtra)
+library(fst)
+
+conflicted::conflict_prefer("roc",       "pROC")
+conflicted::conflict_prefer("filter",    "dplyr")
+conflicted::conflict_prefer("slice",     "dplyr")
+conflicted::conflict_prefer('summarise', 'dplyr')
+conflicted::conflict_prefer("gather",    "tidyr")
+conflicted::conflict_prefer("set_names", "purrr")
+
+library(rmarkdown)
