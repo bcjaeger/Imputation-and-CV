@@ -19,8 +19,8 @@ make_fig_trends_by_nbrs <- function(sim_data) {
     mutate(
       cv_strat = recode(
         cv_strat, 
-        cv_imp = 'imputation in each replicate',
-        imp_cv = 'imputation before data splitting.'
+        cv_imp = 'imputation during each replicate of CV',
+        imp_cv = 'imputation before CV.'
       ),
       cv_strat = fct_relevel(factor(cv_strat),
                              'imputation before data splitting.')
@@ -37,7 +37,8 @@ make_fig_trends_by_nbrs <- function(sim_data) {
                 linetype = 2, method = 'lm', color = 'black',
                 formula = y~poly(x,2), se = FALSE) +
     facet_grid(nobs~scenario, scales = 'free') + 
-    scale_color_brewer(palette = 'Dark2') + 
+    scale_color_manual(values = c('purple', 'orange')) +
+    #scale_color_brewer(palette = 'Dark2') + 
     labs(
       x = 'Number of neighbors used to impute missing values',
       y = 'R-squared', 
@@ -47,8 +48,8 @@ make_fig_trends_by_nbrs <- function(sim_data) {
     theme_bw() +
     theme(
       legend.position = 'top', 
-      legend.direction = 'vertical',
-      panel.grid = element_blank()
+      legend.direction = 'vertical'
+      #panel.grid = element_blank()
     ) + 
     scale_y_continuous(labels = scales::percent)
   
@@ -59,7 +60,7 @@ make_fig_trends_by_nbrs <- function(sim_data) {
     path = 'doc/figs', 
     device = 'png',
     plot = fig, 
-    dpi = 300,
+    dpi = 600,
     width = 6.5, 
     height = 6
   )

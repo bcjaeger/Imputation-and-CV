@@ -126,8 +126,12 @@ make_ames_desc <- function(ames_data, decimals) {
   
   
   ames$tuned_smry <- tuned_rows %>% 
-    summarize(across(c(cvi, icv), 
-                     ~tbl_string("{mean(.x)} ({sd(.x)})", decimals = decimals))) %>% 
+    summarize(
+      across(
+        .cols = c(cvi, icv), 
+        .fns = ~tbl_string("{mean(.x)} ({sd(.x)})", decimals = decimals)
+      )
+    ) %>% 
     pivot_wider(names_from = model, values_from = c(cvi, icv))
   
   ames$tuned_cmpr <- tuned_rows %>% 

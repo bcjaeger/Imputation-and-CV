@@ -18,6 +18,7 @@ the_plan <- drake_plan(
   sim_data = make_sim_data(),
   sim_cmp_time = make_sim_cmp_time(),
   sim_cmp_time_smry = make_sim_cmp_time_smry(sim_cmp_time, null_string),
+  sim_cmp_time_inline = make_sim_cmp_time_inline(sim_cmp_time),
   sim_desc = make_sim_desc(sim_cmp_time, sim_data),
   sim_r2 = make_sim_r2(sim_data),
   
@@ -27,36 +28,33 @@ the_plan <- drake_plan(
   # table captions ----
   
   caption_tbl_true_r2 = paste(
-    'True external $R^2$ values for the modeling',
-    'technique that is internally assessed using',
-    '\\cvi\\space and \\icv.'
+    'True external $R^2$ mean (standard deviation) values for the modeling',
+    'technique that is internally assessed using \\cvi\\space and \\icv'
   ),
   
   caption_tbl_diffs_r2 = paste(
-    'Mean absolute differences in estimates of',
-    'external $R^2$ between \\cvi\\space and \\icv.'
+    'Mean (standard deviation) absolute differences in estimates of',
+    'external $R^2$ between \\cvi\\space and \\icv'
   ),
   
   caption_tbl_rbs_r2 = paste(
-    "Bias of external $R^2$ estimates using \\cvi\\space and \\icv."
+    "Bias of external $R^2$ estimates using \\cvi\\space and \\icv"
   ),
   
   caption_tbl_std_r2 = paste(
     "Standard deviation of external $R^2$",
-    "estimates using \\cvi\\space and \\icv."
+    "estimates using \\cvi\\space and \\icv"
   ),
   
   caption_tbl_rmse_r2 = paste(
     "Root-mean-squared error of external $R^2$",
-    "estimates using \\cvi\\space and \\icv."
+    "estimates using \\cvi\\space and \\icv"
   ),
   
   caption_tbl_tune_r2 = paste(
     "Mean external $R^2$ when \\cvi\\space and \\icv\\space",
-    "were applied to tune the number of neighbors used for imputation."
+    "were applied to tune the number of neighbors used for imputation"
   ),
-  
-  # figure captions ----
   
   # table creation ----
   
@@ -120,6 +118,7 @@ the_plan <- drake_plan(
   # figure creation ----
   
   fig_trends_by_nbrs = make_fig_trends_by_nbrs(sim_data),
+  fig_ames_cmp_time  = make_fig_ames_cmp_time(ames_data),
   
   # inline results ----
   

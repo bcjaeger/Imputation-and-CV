@@ -11,20 +11,63 @@ make_sim_desc <- function(sim_cmp_time, sim_data) {
     pluck('seconds') %>% 
     magrittr::divide_by(60 * 60) # seconds to hours 
   
-  sim_time_compare <- sim_cmp_time %>% 
+  sim_time_miqr <- sim_cmp_time %>% 
+    separate(key, into = c('scenario', 'miss_pattern')) %>% 
+    #mutate(time = time / 60) %>% # minutes 
+    group_by(action, cv_strat) %>% 
+    summarize(
+      time = quantile(time, probs = c(0.25, 0.50, 0.75)),
+      probs = 100 * c(0.25, 0.50, 0.75),
+      .groups = 'keep'
+    ) %>%
+    pivot_wider(
+      names_from = probs, 
+      values_from = time, 
+      names_prefix = 'time_'
+    ) %>% 
+    transmute(time = tbl_string("{time_50} ({time_25} - {time_75})")) %>% 
+    pivot_wider(names_from = cv_strat, values_from = time) %>% 
+    ungroup() %>% 
     filter(action == 'make') %>% 
-    group_by(cv_strat) %>% 
-    summarize(time_minutes = mean(time) / 60, .groups = 'drop') %>% 
-    mutate(
-      time_ratio = max(time_minutes) / min(time_minutes),
-      time_minutes = format(round(time_minutes, 2), nsmall = 2)
-    )
+    select(-action)
+  
+  sim_time_ratio <- sim_cmp_time %>% 
+    separate(key, into = c('scenario', 'miss_pattern')) %>% 
+    #mutate(time = time / 60) %>% # minutes 
+    group_by(scenario, miss_pattern, seeds, seed, ncov, nobs, action) %>% 
+    summarize(
+      time_ratio = time[cv_strat == 'cv_imp'] / time[cv_strat == 'imp_cv'],
+      .groups = 'drop'
+    ) %>%
+    group_by(action) %>% 
+    summarize(
+      time_ratio = quantile(time_ratio, probs = c(0.25, 0.50, 0.75)),
+      probs = 100 * c(0.25, 0.50, 0.75),
+      .groups = 'keep'
+    ) %>%
+    pivot_wider(
+      names_from = probs, 
+      values_from = time_ratio, 
+      names_prefix = 'time_'
+    ) %>% 
+    transmute(ratio = tbl_string("{time_50} ({time_25} - {time_75})")) %>% 
+    ungroup() %>% 
+    filter(action == 'make') %>% 
+    select(-action)
+  
+  sim_time_compare <- as.list(bind_cols(sim_time_miqr, sim_time_ratio))
   
   sim_time_mdl <- sim_cmp_time %>% 
     filter(action == 'mdl', cv_strat == 'imp_cv') %>% 
-    summarise(time_minutes = mean(time) / 60) %>% 
-    mutate(time_minutes = format(round(time_minutes, 2), nsmall = 2)) %>% 
-    as.character()
+    summarise(time = quantile(time, probs = c(0.25, 0.50, 0.75)),
+              probs = 100 * c(0.25, 0.50, 0.75)) %>% 
+    pivot_wider(
+      names_from = probs, 
+      values_from = time, 
+      names_prefix = 'time_'
+    ) %>% 
+    transmute(value = tbl_string("{time_50} ({time_25} - {time_75})")) %>% 
+    pull(value)
   
   sim_counts <- read.fst('data/sim_counts.fst')
   

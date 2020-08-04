@@ -1,7 +1,7 @@
 
 # This code deals with raw results from the simulation.
 # The raw results are not pushed to github due to space limitations.
-# => this is not reproducible unless you generate the raw data locally.
+# => you must use sim_slurm.R to generate raw data to use this.
 
 # Clean simulation data -----------------------------------------------------
 
