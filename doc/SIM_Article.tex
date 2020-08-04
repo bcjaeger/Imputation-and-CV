@@ -88,15 +88,16 @@ as-yet-unseen, observations).\citep{kuhn2013applied} The training error
 of a model will often be overly optimistic for the generalization error.
 As such, it is standard practice to use sample-splitting methods to
 estimate generalization error. These methods train and test models using
-separate datasets. Cross-validation (CV) is a common sample-splitting
-method that partitions a dataset into \(v\) non-overlapping subsets
-(\textit{i.e., }folds). Each fold is then used as an internal testing
-set for a modeling algorithm developed using data from the \(k-1\)
-remaining folds. Aggregating errors from all \(k\) replications of this
-procedure provides an estimate of the modeling algorithm's
-generalization error, making \(k\)-fold CV an ideal technique to `tune'
-modeling algorithms (\textit{i.e., }select optimal values for parameters
-that govern the algorithm's fitting procedure).
+separate datasets. \(v\)-fold Cross-validation (CV) is a common
+sample-splitting method that partitions a dataset into \(v\)
+non-overlapping subsets (\textit{i.e., }folds).\cite{arlot2010survey}
+Each fold is then used as an internal testing set for a modeling
+algorithm developed using data from the \(v-1\) remaining folds.
+Aggregating errors from all \(v\) replications of this procedure
+provides an estimate of the modeling algorithm's generalization error,
+making \(v\)-fold CV an ideal technique to `tune' modeling algorithms
+(\textit{i.e., }select optimal values for parameters that govern the
+algorithm's fitting procedure).
 
 Machine learning analyses often involve `pipeline' modeling algorithms,
 which are sequences of operations that may include data pre-processing,
@@ -135,9 +136,9 @@ selection) can be applied prior to CV without causing model error
 estimates to become overly optimistic.
 
 The aim of this paper is to assess whether unsupervised imputation
-before versus after CV causes bias in estimation of a modeling
+before versus during CV causes bias in estimation of a modeling
 pipeline's generalization error. We also investigate whether
-unsupervised imputation before versus after CV can result in poorly
+unsupervised imputation before versus during CV can result in poorly
 selected tuning parameters and thus degrade the external performance of
 downstream models. To achieve these aims, we conduct empirical studies
 of simulated and real data assessing whether unbiased generalization
@@ -716,21 +717,22 @@ $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space versus
 $\texttt{CV}\!\circlearrowright\!\texttt{I}$. We used the \texttt{ipa} R
 package to conduct unsupervised imputation throughout our analyses and
 disseminate both the R package and all code used for the current
-analysis on the first author's github:
-\href{https://github.com/bcjaeger/Imputation-and-CV}{}. Each of these
-supplemental components ensure that our work is easily reproduced and
-disseminated. There are also some gaps in the current study that can be
-filled by future work. We investigated \(v\)-fold CV in the current
-analysis. Future research may assess whether these results generalize to
-other forms of data-splitting such as Monte-Carlo CV or bootstrap CV.
-Because MNAR data present challenges that may not be overcome by
-imputation alone, we did not include simulations for MNAR data. Whether
-the current study's findings generalize to settings with MNAR data
-remains an interesting, unanswered question. Last, the current study has
-applied k-nearest neighbor imputation throughout. As many other types of
-imputation procedures have been established, there are numerous
-extensions of the current analysis that may explore whether our results
-hold when other imputation approaches are implemented.
+analysis on the
+\href{https://github.com/bcjaeger/Imputation-and-CV}{first author's
+GitHub}. Each of these supplemental components ensure that our work is
+easily reproduced and disseminated. There are also some gaps in the
+current study that can be filled by future work. We investigated
+\(v\)-fold CV in the current analysis. Future research may assess
+whether these results generalize to other forms of data-splitting such
+as Monte-Carlo CV or bootstrap CV. Because MNAR data present challenges
+that may not be overcome by imputation alone, we did not include
+simulations for MNAR data. Whether the current study's findings
+generalize to settings with MNAR data remains an interesting, unanswered
+question. Last, the current study has applied k-nearest neighbor
+imputation throughout. As many other types of imputation procedures have
+been established, there are numerous extensions of the current analysis
+that may explore whether our results hold when other imputation
+approaches are implemented.
 
 \FloatBarrier
 
