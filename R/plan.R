@@ -29,31 +29,43 @@ the_plan <- drake_plan(
   
   caption_tbl_true_r2 = paste(
     'True external $R^2$ mean (standard deviation) values for the modeling',
-    'technique that is internally assessed using \\cvi\\space and \\icv'
+    'technique that is internally assessed using \\cvi\\space and \\icv.',
+    'Descriptions of scenarios 1, 2, and 3 are provided in Section',
+    '\\ref{subsec:data_gen}'
   ),
   
   caption_tbl_diffs_r2 = paste(
     'Mean (standard deviation) absolute differences in estimates of',
-    'external $R^2$ between \\cvi\\space and \\icv'
+    'external $R^2$ between \\cvi\\space and \\icv.',
+    'Descriptions of scenarios 1, 2, and 3 are provided in Section',
+    '\\ref{subsec:data_gen}'
   ),
   
   caption_tbl_rbs_r2 = paste(
-    "Bias of external $R^2$ estimates using \\cvi\\space and \\icv"
+    "Bias of external $R^2$ estimates using \\cvi\\space and \\icv.",
+    'Descriptions of scenarios 1, 2, and 3 are provided in Section',
+    '\\ref{subsec:data_gen}'
   ),
   
   caption_tbl_std_r2 = paste(
     "Standard deviation of external $R^2$",
-    "estimates using \\cvi\\space and \\icv"
+    "estimates using \\cvi\\space and \\icv.",
+    'Descriptions of scenarios 1, 2, and 3 are provided in Section',
+    '\\ref{subsec:data_gen}'
   ),
   
   caption_tbl_rmse_r2 = paste(
     "Root-mean-squared error of external $R^2$",
-    "estimates using \\cvi\\space and \\icv"
+    "estimates using \\cvi\\space and \\icv.",
+    'Descriptions of scenarios 1, 2, and 3 are provided in Section',
+    '\\ref{subsec:data_gen}'
   ),
   
   caption_tbl_tune_r2 = paste(
     "Mean external $R^2$ when \\cvi\\space and \\icv\\space",
-    "were applied to tune the number of neighbors used for imputation"
+    "were applied to tune the number of neighbors used for imputation.",
+    'Descriptions of scenarios 1, 2, and 3 are provided in Section',
+    '\\ref{subsec:data_gen}'
   ),
   
   # table creation ----

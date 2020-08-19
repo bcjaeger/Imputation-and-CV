@@ -1,0 +1,93 @@
+\begin{thebibliography}{10}
+\providecommand \doibase [0]{http://dx.doi.org/}%
+
+\bibitem{kuhn2013applied}
+Kuhn M, Johnson K, others . {\it Applied predictive modeling}. 26.
+\newblock Springer .
+\newblock 2013.
+
+\bibitem{arlot2010survey}
+Arlot S, Celisse A, others . A survey of cross-validation procedures for model
+  selection. {\it Statistics surveys} 2010\string; 4\string: 40--79.
+
+\bibitem{mlr3}
+Lang M, Binder M, Richter J, et al. {mlr3}: A modern object-oriented machine
+  learning framework in {R}. {\it Journal of Open Source Software} 2019.
+\newblock \href {\doibase 10.21105/joss.01903} {doi: 10.21105/joss.01903}
+
+\bibitem{hastie2009elements}
+Hastie T, Tibshirani R, Friedman J. {\it The elements of statistical learning:
+  data mining, inference, and prediction}. 2.
+\newblock Springer Science \& Business Media .
+\newblock 2009.
+
+\bibitem{stekhoven2011missforest}
+Stekhoven DJ, B{\"u}hlmann P. MissForest—non-parametric missing value
+  imputation for mixed-type data. {\it Bioinformatics} 2011\string;
+  28(1)\string: 112--118.
+
+\bibitem{rubin1976inference}
+Rubin DB. Inference and missing data. {\it Biometrika} 1976\string;
+  63(3)\string: 581--592.
+
+\bibitem{twala2008good}
+Twala B, Jones M, Hand DJ. Good methods for coping with missing data in
+  decision trees. {\it Pattern Recognition Letters} 2008\string; 29(7)\string:
+  950--956.
+
+\bibitem{twala2009empirical}
+Twala B. An empirical comparison of techniques for handling incomplete data
+  using decision trees. {\it Applied Artificial Intelligence} 2009\string;
+  23(5)\string: 373--405.
+
+\bibitem{tang2017random}
+Tang F, Ishwaran H. Random forest missing data algorithms. {\it Statistical
+  Analysis and Data Mining: The ASA Data Science Journal} 2017\string;
+  10(6)\string: 363--377.
+
+\bibitem{van2018flexible}
+Van~Buuren S. {\it Flexible imputation of missing data}.
+\newblock CRC press .
+\newblock 2018.
+
+\bibitem{kuhn2019feature}
+Kuhn M, Johnson K. {\it Feature engineering and selection: A practical approach
+  for predictive models}.
+\newblock CRC Press .
+\newblock 2019.
+
+\bibitem{jerez2010missing}
+Jerez JM, Molina I, Garc{\'\i}a-Laencina PJ, et al. Missing data imputation
+  using statistical and machine learning methods in a real breast cancer
+  problem. {\it Artificial intelligence in medicine} 2010\string; 50(2)\string:
+  105--115.
+
+\bibitem{neunhoeffer2019cross}
+Neunhoeffer M, Sternberg S. How cross-validation can go wrong and what to do
+  about it. {\it Political Analysis} 2019\string; 27(1)\string: 101--106.
+
+\bibitem{softImpute}
+Hastie T, Mazumder R. softImpute: Matrix Completion via Iterative
+  Soft-Thresholded SVD.  2015.
+\newblock R package version 1.4.
+
+\bibitem{morris2019using}
+Morris TP, White IR, Crowther MJ. Using simulation studies to evaluate
+  statistical methods. {\it Statistics in medicine} 2019\string; 38(11)\string:
+  2074--2102.
+
+\bibitem{mice}
+{van Buuren} S, Groothuis-Oudshoorn K. {mice}: Multivariate Imputation by
+  Chained Equations in R. {\it Journal of Statistical Software} 2011\string;
+  45(3)\string: 1-67.
+
+\bibitem{de2011ames}
+De~Cock D. Ames, Iowa: Alternative to the Boston housing data as an end of
+  semester regression project. {\it Journal of Statistics Education}
+  2011\string; 19(3).
+
+\bibitem{AmesHousing}
+Kuhn M. AmesHousing: The Ames Iowa Housing Data.  2017.
+\newblock R package version 0.0.3.
+
+\end{thebibliography}

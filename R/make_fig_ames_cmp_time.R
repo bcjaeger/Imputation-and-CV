@@ -54,21 +54,41 @@ make_fig_ames_cmp_time <- function(ames_data) {
                          decimals = c(3,1,0))
     )
   
-  fig <- ggplot(.ames_tune) + 
+  prelim_plot <- ggplot(.ames_tune) + 
+    aes(x = time, y = r2) + 
+    geom_hex() +
+    scale_fill_gradient(low = 'grey90', 
+                        high = 'grey30', 
+                        name = 'Number of\nobservations')
+  
+  count_legend <- get_legend(prelim_plot)
+  
+  prelim_fig <- ggplot(.ames_tune) + 
     aes(x = time, y = r2, color = metric) +
-    geom_hex(aes(fill=metric), 
-             bins = 75, 
-             alpha = 0.25,
-             show.legend = FALSE) +
+    geom_hex(data = filter(.ames_tune, metric == 'Imputation before CV'),
+             mapping = aes(x = time, y = r2),
+             color = 'purple',
+             inherit.aes = FALSE, 
+             show.legend = FALSE,
+             alpha = 0.50) + 
+    geom_hex(data = filter(.ames_tune, metric != 'Imputation before CV'),
+             mapping = aes(x = time, y = r2),
+             color = 'orange',
+             inherit.aes = FALSE, 
+             show.legend = FALSE,
+             alpha = 0.50) + 
+    scale_fill_gradient(low = 'grey90', high = 'grey30') +
+    # geom_hex(aes(fill = metric),
+    #          bins = 75,
+    #          alpha = 0.25,
+    #          show.legend = FALSE) +
     geom_mark_circle(data = medians, 
                      mapping = aes(label = label), 
                      expand = 0.001, 
                      show.legend = FALSE,
                      label.fontsize = 7) +
     geom_point(data = medians,
-               mapping = aes(x=time, y=r2, fill = metric), 
-               shape = 21, 
-               color = 'black', 
+               mapping = aes(x = time, y = r2, color = metric), 
                size = 7, 
                show.legend = TRUE,
                inherit.aes = FALSE) +
@@ -78,11 +98,13 @@ make_fig_ames_cmp_time <- function(ames_data) {
           legend.position = 'top',
           text = element_text(face = 'bold', colour = 'grey20')) + 
     scale_color_manual(values = c('purple', 'orange')) +
-    scale_fill_manual(values = c('purple', 'orange')) + 
+    #scale_fill_manual(values = c('purple', 'orange')) + 
     labs(x = 'Computation time required for imputation, seconds',
          y = 'External R-squared obtained by final model',
-         fill = 'Imputation order') + 
-    guides(color = FALSE)
+         color = 'Imputation order') + 
+    guides(fill = FALSE)
+  
+  fig <- prelim_fig + count_legend + plot_layout(widths = c(8,2))
   
   # it's just easier to save the image and render it with latex
   # than it is to save the figure object and render it with markdown
@@ -92,7 +114,7 @@ make_fig_ames_cmp_time <- function(ames_data) {
     device = 'png',
     plot = fig, 
     dpi = 600,
-    width = 6, 
+    width = 7, 
     height = 6
   )
   

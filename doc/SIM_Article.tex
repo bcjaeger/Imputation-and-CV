@@ -58,21 +58,19 @@ conducting CV without incurring bias. However, it is unclear whether an
 unsupervised operation that modifies the training data (\ie imputation)
 rather than removing columns from the training data (\ie variable
 selection) can be applied prior to CV without causing model error
-estimates to become overly optimistic. We conducted empirical
-experiments to assess whether conducting unsupervised imputation prior
-to CV would bias estimates of generalization error. We also investigated
-whether unsupervised imputation before versus after CV would result in
-poorly selected tuning parameters and thus degrade the external
-performance of downstream models. Results show that despite optimistic
-bias, the reduced variance of imputation before CV compared to
-imputation during each replicate of CV leads to a lower overall root
-mean squared error for estimation of the oracle external \(R^2\)
-(\ie the external \(R^2\) obtained by a correctly specified model) and
-the performance of models tuned using CV with imputation before versus
-during each replication is minimally different. In conclusion,
-unsupervised imputation before CV appears valid in certain settings and
-may be a helpful strategy that enables analysts to use more flexible
-imputation techniques without incurring high computational costs.}
+estimates to become optimistically biased. We empirically assessed
+whether conducting unsupervised imputation prior to CV would result in
+biased estimates of generalization error or result in poorly selected
+tuning parameters and thus degrade the external performance of
+downstream models. Results show that despite optimistic bias, the
+reduced variance of imputation before CV compared to imputation during
+each replicate of CV leads to a lower overall root mean squared error
+for estimation of the true external \(R^2\) and the performance of
+models tuned using CV with imputation before versus during each
+replication is minimally different. In conclusion, unsupervised
+imputation before CV appears valid in certain settings and may be a
+helpful strategy that enables analysts to use more flexible imputation
+techniques without incurring high computational costs.}
 
 \keywords{Cross-validation; Missing data; Imputation; Machine learning;}
 
@@ -91,29 +89,29 @@ estimate generalization error. These methods train and test models using
 separate datasets. \(v\)-fold Cross-validation (CV) is a common
 sample-splitting method that partitions a dataset into \(v\)
 non-overlapping subsets (\textit{i.e., }folds).\cite{arlot2010survey}
-Each fold is then used as an internal testing set for a modeling
+Each fold is then used as an internal assessment set for a modeling
 algorithm developed using data from the \(v-1\) remaining folds.
 Aggregating errors from all \(v\) replications of this procedure
 provides an estimate of the modeling algorithm's generalization error,
-making \(v\)-fold CV an ideal technique to `tune' modeling algorithms
-(\textit{i.e., }select optimal values for parameters that govern the
-algorithm's fitting procedure).
+making \(v\)-fold CV an effective technique to `tune' modeling
+algorithms (\textit{i.e., }select optimal values for parameters that
+govern the algorithm's fitting procedure).
 
-Machine learning analyses often involve `pipeline' modeling algorithms,
-which are sequences of operations that may include data pre-processing,
-predictor variable selection, model fitting, and ensembling.\citep{mlr3}
-For example, a pipeline may begin by centering and scaling predictor
-values, then filter out redundant correlated predictors, and finally fit
-a regression model to the remaining data. To estimate the generalization
-error of pipeline modeling algorithms using CV, it is recommended that
-the entire sequence of steps be carried out during each replicate of CV
-to mimic the application of the entire pipeline to an external testing
-set. However, it has been stated that unsupervised variable selection
-steps (\textit{i.e., }steps that ignore the outcome variable) can be
-applied before conducting CV without incurring
-bias.\citep{hastie2009elements} Since unsupervised predictor variable
-selection does not involve outcome variables, it does not give the
-selected predictors an unfair advantage during CV.
+Machine learning analyses often involve `pipeline' modeling algorithms:
+multi-step modeling procedures that may include data pre-processing,
+predictor variable selection and/or transformation, model fitting, and
+ensembling.\citep{mlr3} For example, a pipeline may begin by centering
+and scaling predictor values, then filter out redundant correlated
+predictors, and finally fit a regression model to the remaining data. To
+estimate the generalization error of pipeline modeling algorithms using
+CV, it is recommended that the \emph{entire sequence} of steps be
+carried out during each replicate of CV to mimic the application of the
+entire pipeline to an external testing set. However, it has been stated
+that unsupervised variable selection steps (\textit{i.e., }steps that
+ignore the outcome variable) can be applied before conducting CV without
+incurring bias.\citep{hastie2009elements} Since unsupervised predictor
+variable selection does not involve outcome variables, it does not give
+the selected predictors an unfair advantage during CV.
 
 Missing data (MD) occur frequently in machine learning analyses, and
 several learning algorithms (e.g., regression) are incompatible with MD.
@@ -121,19 +119,20 @@ Imputation is a technique that replaces MD with estimated values, and is
 often among the most computationally expensive operations in pipeline
 modeling algorithms. For example, the \texttt{missForest} imputation
 algorithm may fit one random forest model for each column that contains
-MD. Computational expense of applying \texttt{missForest} or other
-complex imputation strategies during each replicate of CV may lead
-analysts to prefer more convenient but less effective strategies to
-handle MD.\citep{stekhoven2011missforest} A more computationally
-efficient approach would be to implement `unsupervised imputation'
-(\textit{i.e., }imputing MD without accessing outcome information)
-\emph{before} conducting CV. Ordering operations this way could result
-in substantially faster training and tuning costs for pipeline modeling
-algorithms. However, it is unclear whether an unsupervised operation
-that modifies the training data (\textit{i.e., }imputation) rather than
-removing columns from the training data (\textit{i.e., }variable
-selection) can be applied prior to CV without causing model error
-estimates to become overly optimistic.
+MD.\citep{stekhoven2011missforest} Computational expense of applying
+\texttt{missForest} or other complex imputation strategies during each
+replicate of CV scales poorly and may lead analysts to prefer more
+convenient but less effective strategies to handle MD. A more
+computationally efficient approach would be to implement `unsupervised
+imputation' (\textit{i.e., }imputing MD without accessing outcome
+information) \emph{before} conducting CV. Ordering operations this way
+could result in substantially faster training and tuning costs for
+pipeline modeling algorithms because imputation is only performed once
+rather than once per CV fold. However, it is unclear whether an
+unsupervised operation that modifies the training data
+(\textit{i.e., }imputation) rather than removing columns from the
+training data (\textit{i.e., }variable selection) can be applied prior
+to CV without causing model error estimates to become overly optimistic.
 
 The aim of this paper is to assess whether unsupervised imputation
 before versus during CV causes bias in estimation of a modeling
@@ -241,33 +240,26 @@ In the context of statistical prediction, analysts usually work with a
 training set and an external testing set. A pipeline modeling algorithm
 developed with data from the training set can be externally validated
 using data from the testing set. Workflows to develop and validate a
-pipeline model often include four steps: (1) selection of pipeline
+pipeline model may include three steps: (1) selection of pipeline
 parameter values (\textit{i.e., }parameters relevant to any operation in
-the pipeline), (2) training and application of data pre-processing
-operations for the training and testing sets, respectively, (3)
-development of a prediction model using data from the training set, and
-(4) validation of the prediction function using data from the testing
-set. This workflow is described in \textbf{Figure}
-\ref{fig:workflow_ml}.
-
-\begin{figure}
-\includegraphics[width=1\linewidth]{figs/workflow_ML} 
-\caption{A modeling pipeline for machine learning analysis.}
-\label{fig:workflow_ml}
-\end{figure}
+the pipeline, including data pre-processing), (2) developing a final
+model by training the modeling pipeline using the training data, and (3)
+externally validating the final model by assessing the accuracy of its
+predictions with the testing data. This workflow is described in
+\textbf{Figure} \ref{fig:workflow_ml}.
 
 Pipeline parameter values may be set apriori or determined empirically
-(\textit{i.e., }tuned) using resampling (\textit{e.g., }\(v\)-fold CV).
-We refer to the \(v-1\) folds and 1 remaining fold used to internally
-train and test a modeling algorithm as \textbf{analysis} and
-\textbf{assessment} sets, respectively, to avoid notation abuse of the
-terms `training' and `testing.' If CV is applied to facilitate selection
-of pipeline parameter values, it is critical that analysis data are
-separated from assessment data before any `learning' is done. The entire
-\emph{supervised} pipeline must be run using only the assessment data.
-This applies both to supervised data pre-processing steps
-(\textit{e.g., }selecting all variables with high correlation to the
-outcome) as well as supervised modeling procedures
+(\textit{i.e., }tuned) using resampling, \textit{e.g., }by leveraging
+\(v\)-fold CV. We refer to the \(v-1\) folds and 1 remaining fold used
+to internally train and test a modeling algorithm as \textbf{analysis}
+and \textbf{assessment} sets, respectively, to avoid notation abuse of
+the terms `training' and `testing.' If CV is applied to facilitate
+selection of pipeline parameter values, it is critical that analysis
+data are separated from assessment data before any `learning' is done.
+The entire \emph{supervised} pipeline must be run using only the
+assessment data. This applies both to supervised data pre-processing
+steps (\textit{e.g., }selecting all variables with high correlation to
+the outcome) as well as supervised modeling procedures
 (\textit{e.g., }regression). `Data leakage' can occur when outcome
 information from the assessment set is leveraged to modify the analysis
 set, \textit{e.g., }supervised variable selection is performed on a
@@ -290,35 +282,19 @@ Specifically, the means and standard deviations are computed using the
 analysis data and then those values are applied to center and scale
 predictors in both the analysis and assessment sets. We refer to this
 traditional implementation of CV as
-$\texttt{CV}\!\circlearrowright\!\texttt{I}$\space (\textbf{Figure}
-\ref{fig:workflow_cvi}) and refer to our experimental implementation of
-CV (\textit{i.e., }one where unsupervised imputation occurs before CV
-begins) as
+$\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and refer to the
+experimental implementation of CV (\textit{i.e., }one where unsupervised
+imputation occurs before CV begins) as
 $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space (\textbf{Figure}
-\ref{fig:workflow_icv}). Regardless of which implementation is applied,
-the output of CV is a set of pipeline parameter values and an estimate
-of generalization error. The pipeline parameter values are subsequently
-used to develop and validate a final prediction model using the full
-training set and testing set, respectively. Notably, intermediate
-estimates of generalization error are often used by CV learners
-{[}DEFINE CV LEARNER IN INTRO OR OTHER{]}
-(\textit{e.g., }\texttt{glmnet.cv}) to select tuning parameter values.
-Differences in the values selected by competing strategies
+\ref{fig:workflow_cv_bothways}). Regardless of which implementation is
+applied, the output of CV is a set of pipeline parameter values and an
+estimate of generalization error. The pipeline parameter values are
+subsequently used to develop and validate a final prediction model using
+the full training set and testing set, respectively. Differences in
+parameter values selected by competing CV strategies
 (\textit{i.e., }$\texttt{CV}\!\circlearrowright\!\texttt{I}$\space or
 $\texttt{I}\!\!\rightarrow\!\texttt{CV}$) may have measurable impact on
 the generalization error of their downstream models.
-
-\begin{figure}
-\includegraphics[width=1\linewidth]{figs/workflow_CVI} 
-\caption{A traditional workflow for $v$-fold cross-validation that applies k-nearest neighbor unsupervised imputation within each replicate (\textit{i.e., }$\texttt{CV}\!\circlearrowright\!\texttt{I}$).}
-\label{fig:workflow_cvi}
-\end{figure}
-
-\begin{figure}
-\includegraphics[width=1\linewidth]{figs/workflow_ICV} 
-\caption{An experimental workflow for $v$-fold cross-validation that applies k-nearest neighbor unsupervised imputation prior to data splitting (\textit{i.e., }$\texttt{I}\!\!\rightarrow\!\texttt{CV}$)}
-\label{fig:workflow_icv}
-\end{figure}
 
 \subsection{Testing data} \label{subsec:testing_data}
 
@@ -328,38 +304,38 @@ data, additional steps may be taken to engage with them. One may impute
 missing values in the testing data using (1) only the training data, (2)
 only the testing data, or (3) using both training and testing data. It
 is common to use only the training data to impute missing values in the
-testing data. However, some imputation procedures can only impute values
-in the data that were used to train the imputation procedure
-(\textit{e.g., }matrix decomposition methods such as
-\texttt{softImpute}).\citep{softImpute} To apply these types of
-imputation procedures, approach (2) or (3) may be taken. In the current
-analysis, $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space uses only
-the analysis data to impute missing values in the assessment data, and
+testing data. However, some imputation procedures can't be discretely
+separated into two steps, one that develops an imputation model and
+another that applies it to new data. For example, matrix decomposition
+methods such as \texttt{softImpute} merely take a matrix with missing
+entries and fill them in.\citep{softImpute} To apply these types of
+imputation procedures, approach (2) or (3) may be taken. Notably,
+$\texttt{CV}\!\circlearrowright\!\texttt{I}$\space uses only the
+analysis data to impute missing values in the assessment data
+(\textit{i.e., }approach 1), and
 $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space uses a stacked version of
 the analysis and assessment data (\textit{i.e., }all of the training
-data) to impute missing values. In the broader ML workflow (see Figure
-\ref{fig:workflow_ml}), we employ approach (1), as is standard in
-applied practice.
+data; approach 3) to impute missing values. Following CV, our analyses
+strictly implement approach 1 to engage with missing values in the
+testing data.
 
 \section{Simulated experiments} \label{sec:sim}
 
 The goal of the current simulation study was to assess empirical
 differences between
 $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and
-$\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space following a standard
+$\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space following a published
 protocol.\cite{morris2019using} Our primary objective was to measure and
 compare how well each strategy (1) approximated a model's generalization
 error and (2) selected parameters (both for imputation and modeling)
 that would maximize downstream model accuracy. To complete item (1), we
-assessed estimation of the oracle external \(R^2\). The `oracle'
-performance is the performance of an `oracle' model whose specification
-coincides with the specification that generated the data that the model
-is fitted to. We used bias, variance, and root-mean-squared error (RMSE)
-to quantify estimation accuracy. The RMSE provides an overall assessment
-of estimation accuracy that depends on both bias and variance. To
-complete item (2), we compared the performance (\textit{i.e., }the
-external \(R^2\)) of downstream models whose tuning parameters were
-selected using $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space versus
+assessed estimation of the external \(R^2\). We used bias, variance, and
+root-mean-squared error (RMSE) to quantify estimation accuracy. The RMSE
+provides an overall assessment of estimation accuracy that depends on
+both bias and variance. To complete item (2), we compared the
+performance (\textit{i.e., }the external \(R^2\)) of downstream models
+whose tuning parameters were selected using
+$\texttt{CV}\!\circlearrowright\!\texttt{I}$\space versus
 $\texttt{I}\!\!\rightarrow\!\texttt{CV}$.
 
 \subsection{Data-generating mechanisms} \label{subsec:data_gen}
@@ -421,7 +397,7 @@ external validation set.
 We applied \(k\)-nearest-neighbor imputation to handle MD and least
 absolute shrinkage and selection operator (LASSO) regression to develop
 prediction functions throughout the simulated experiments. The LASSO
-model is an `oracle' model for these simulations since all data were
+model is an appropriate model for these simulations since all data were
 generated with linear, independent effects. Nearest neighbor aggregation
 was used to form imputed values in the training and testing set and also
 in the analysis and assessment set for
@@ -445,13 +421,13 @@ determined by these parameters and also provide overall summary
 statistics for scenarios 1, 2, and 3 when data are MCAR and MAR
 (\textit{i.e., }aggregating over training sample size and predictor to
 noise ratio). In each simulation replication, we computed the true
-oracle external \(R^2\) in the validation set for each potential value
-of nearest neighbors
+external \(R^2\) in the validation set for each potential value of
+nearest neighbors
 (\textit{i.e., }\(k \in \lbrace 1, 2, \ldots, 35 \rbrace\)). We also
 estimated external \(R^2\) for each value of \(k\) using
 $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and
 $\texttt{I}\!\!\rightarrow\!\texttt{CV}$, separately, to evaluate how
-well these CV procedures estimated the true oracle external \(R^2\). We
+well these CV procedures estimated the true external \(R^2\). We
 assessed the difference between estimated external \(R^2\) according to
 $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and
 $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space as well as the bias,
@@ -459,8 +435,8 @@ variance, and root-mean-squared error (RMSE) of these estimates. Last,
 we investigated the accuracy of downstream models when
 $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and
 $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space were applied to select
-the number of neighbors to use for imputation and the regularization
-parameter for a penalized regression model.
+the number of neighbors to use for imputation and then the
+regularization parameter for a penalized regression model.
 
 \subsection{Results} \label{subsec:sim_results}
 
@@ -738,7 +714,7 @@ approaches are implemented.
 
 \begin{table}
 
-\caption{\label{tab:ext_rsq}True external $R^2$ mean (standard deviation) values for the modeling technique that is internally assessed using $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and $\texttt{I}\!\!\rightarrow\!\texttt{CV}$. All table values are scaled by 100 for convenience}
+\caption{\label{tab:ext_rsq}True external $R^2$ mean (standard deviation) values for the modeling technique that is internally assessed using $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and $\texttt{I}\!\!\rightarrow\!\texttt{CV}$. Descriptions of scenarios 1, 2, and 3 are provided in Section \ref{subsec:data_gen}. All table values are scaled by 100 for convenience}
 \centering
 \begin{tabular}[t]{lcccccc}
 \toprule
@@ -777,7 +753,7 @@ N & MAR & MCAR & MAR & MCAR & MAR & MCAR\\
 
 \begin{table}
 
-\caption{\label{tab:cv_diffs}Mean (standard deviation) absolute differences in estimates of external $R^2$ between $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and $\texttt{I}\!\!\rightarrow\!\texttt{CV}$. All table values are scaled by 100 for convenience}
+\caption{\label{tab:cv_diffs}Mean (standard deviation) absolute differences in estimates of external $R^2$ between $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and $\texttt{I}\!\!\rightarrow\!\texttt{CV}$. Descriptions of scenarios 1, 2, and 3 are provided in Section \ref{subsec:data_gen}. All table values are scaled by 100 for convenience}
 \centering
 \begin{tabular}[t]{lcccccc}
 \toprule
@@ -816,7 +792,7 @@ N & MAR & MCAR & MAR & MCAR & MAR & MCAR\\
 
 \begin{table}
 
-\caption{\label{tab:bias}Bias of external $R^2$ estimates using $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and $\texttt{I}\!\!\rightarrow\!\texttt{CV}$. All table values are scaled by 100 for convenience}
+\caption{\label{tab:bias}Bias of external $R^2$ estimates using $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and $\texttt{I}\!\!\rightarrow\!\texttt{CV}$. Descriptions of scenarios 1, 2, and 3 are provided in Section \ref{subsec:data_gen}. All table values are scaled by 100 for convenience}
 \centering
 \begin{tabular}[t]{lcccccccccccc}
 \toprule
@@ -857,7 +833,7 @@ N & $\texttt{CV}\!\circlearrowright\!\texttt{I}$& $\texttt{I}\!\!\rightarrow\!\t
 
 \begin{table}
 
-\caption{\label{tab:variance}Standard deviation of external $R^2$ estimates using $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and $\texttt{I}\!\!\rightarrow\!\texttt{CV}$. All table values are scaled by 100 for convenience}
+\caption{\label{tab:variance}Standard deviation of external $R^2$ estimates using $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and $\texttt{I}\!\!\rightarrow\!\texttt{CV}$. Descriptions of scenarios 1, 2, and 3 are provided in Section \ref{subsec:data_gen}. All table values are scaled by 100 for convenience}
 \centering
 \begin{tabular}[t]{lcccccccccccc}
 \toprule
@@ -898,7 +874,7 @@ N & $\texttt{CV}\!\circlearrowright\!\texttt{I}$& $\texttt{I}\!\!\rightarrow\!\t
 
 \begin{table}
 
-\caption{\label{tab:rmse}Root-mean-squared error of external $R^2$ estimates using $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and $\texttt{I}\!\!\rightarrow\!\texttt{CV}$. All table values are scaled by 100 for convenience}
+\caption{\label{tab:rmse}Root-mean-squared error of external $R^2$ estimates using $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and $\texttt{I}\!\!\rightarrow\!\texttt{CV}$. Descriptions of scenarios 1, 2, and 3 are provided in Section \ref{subsec:data_gen}. All table values are scaled by 100 for convenience}
 \centering
 \begin{tabular}[t]{lcccccccccccc}
 \toprule
@@ -939,7 +915,7 @@ N & $\texttt{CV}\!\circlearrowright\!\texttt{I}$& $\texttt{I}\!\!\rightarrow\!\t
 
 \begin{table}
 
-\caption{\label{tab:tune}Mean external $R^2$ when $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space were applied to tune the number of neighbors used for imputation. All table values are scaled by 100 for convenience}
+\caption{\label{tab:tune}Mean external $R^2$ when $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space were applied to tune the number of neighbors used for imputation. Descriptions of scenarios 1, 2, and 3 are provided in Section \ref{subsec:data_gen}. All table values are scaled by 100 for convenience}
 \centering
 \begin{tabular}[t]{lcccccccccccc}
 \toprule
@@ -978,15 +954,36 @@ N & $\texttt{CV}\!\circlearrowright\!\texttt{I}$& $\texttt{I}\!\!\rightarrow\!\t
 \end{tabular}
 \end{table}
 
+\FloatBarrier
+
+\begin{figure}
+\includegraphics[width=1\linewidth]{figs/workflow_ML} 
+\caption{A workflow to develop and validate a pipeline modeling algorithm. Pipeline parameter values may be set apriori or determined empirically using cross validation. Once parameter values are fixed, a final model is developed by training the modeling pipeline using the training data. The final model is externally validated by assessing the accuracy of its predictions in the testing data.}
+\label{fig:workflow_ml}
+\end{figure}
+
+\FloatBarrier
+
+\begin{figure}
+\centering
+\includegraphics[width=0.85\linewidth]{figs/workflow_cv_bothways} 
+\caption{Workflows for cross validation (CV) incorporating imputation of missing values. The difference in the workflows is where imputation is performed. The standard workflow, $\texttt{CV}\!\circlearrowright\!\texttt{I}$, imputes missing values during each replicate of CV. The experimental workflow, $\texttt{I}\!\!\rightarrow\!\texttt{CV}$, imputes missing values prior to CV. Critically, $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space means imputation happens once, whereas in $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space the imputation procedure occurs for each fold, adding computational time.}
+\label{fig:workflow_cv_bothways}
+\end{figure}
+
+\FloatBarrier
+
 \begin{figure}
 \includegraphics[width=1\linewidth]{figs/fig_trends_by_nbrs} 
-\caption{External generalization error and internal estimates of generalization error using $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space and $\texttt{CV}\!\circlearrowright\!\texttt{I}$.}
+\caption{External generalization error and internal estimates of generalization error using $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space and $\texttt{CV}\!\circlearrowright\!\texttt{I}$. The $R^2$ values are plotted as a function of the number of nearest neighbors used to impute missing data, and the panel rows show results with 100, 500, 1000, and 5000 observations in the training data. The scenarios are described in Section \ref{subsec:data_gen}. The peaks of all three curves conistently appear to be at the same number of neighbors. While $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space error estimates have a slight positive bias, as noted in section \ref{subsec:sim_results}, they also have less variability than error estimates using $\texttt{CV}\!\circlearrowright\!\texttt{I}$.}
 \label{fig:sim_r2}
 \end{figure}
 
+\FloatBarrier
+
 \begin{figure}
 \includegraphics{figs/fig_ames_cmp_time} 
-\caption{External generalization error and computation time for random forest models and linear regression models tuned using $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space and $\texttt{CV}\!\circlearrowright\!\texttt{I}$.}
+\caption{External generalization error and computation time for random forest models and linear regression models tuned using $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space and $\texttt{CV}\!\circlearrowright\!\texttt{I}$. A hex-bin plot was used to}
 \label{fig:ames_cmp_time}
 \end{figure}
 
