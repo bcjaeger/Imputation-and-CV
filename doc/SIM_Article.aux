@@ -43,6 +43,7 @@
 \citation{kuhn2019feature}
 \citation{jerez2010missing}
 \BKM@entry{id=5,open,dest={73656374696F6E2E33},srcline={237}}{4F72646572206F66204F7065726174696F6E73}
+\citation{breiman}
 \citation{hastie2009elements}
 \citation{neunhoeffer2019cross}
 \@writefile{toc}{\contentsline {paragraph}{Missing data strategies for statistical prediction}{4}{section.2}\protected@file@percent }
@@ -60,25 +61,30 @@
 \citation{mice}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Data-generating mechanisms}{6}{subsection.4.1}\protected@file@percent }
 \newlabel{subsec:data_gen}{{4.1}{6}{Data-generating mechanisms}{subsection.4.1}{}}
+\@writefile{toc}{\contentsline {paragraph}{Data generation scenarios}{6}{subsection.4.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Amputing data}{6}{subsection.4.1}\protected@file@percent }
-\BKM@entry{id=9,open,dest={73756273656374696F6E2E342E32},srcline={441}}{526573756C7473}
+\citation{tibshirani1996regression}
+\citation{gower1971general}
+\citation{glmnet}
+\BKM@entry{id=9,open,dest={73756273656374696F6E2E342E32},srcline={445}}{526573756C7473}
 \@writefile{toc}{\contentsline {paragraph}{Modeling procedure}{7}{subsection.4.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Analysis plan}{7}{subsection.4.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Results}{7}{subsection.4.2}\protected@file@percent }
 \newlabel{subsec:sim_results}{{4.2}{7}{Results}{subsection.4.2}{}}
-\BKM@entry{id=10,open,dest={73656374696F6E2E35},srcline={520}}{5265616C2064617461206578706572696D656E7473}
+\BKM@entry{id=10,open,dest={73656374696F6E2E35},srcline={524}}{5265616C2064617461206578706572696D656E7473}
 \citation{de2011ames}
 \citation{AmesHousing}
 \@writefile{toc}{\contentsline {paragraph}{Bias, variance, and RMSE}{8}{subsection.4.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Downstream model performance}{8}{subsection.4.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {5}Real data experiments}{8}{section.5}\protected@file@percent }
 \newlabel{sec:app}{{5}{8}{Real data experiments}{section.5}{}}
-\BKM@entry{id=11,open,dest={73756273656374696F6E2E352E31},srcline={570}}{526573756C7473}
+\citation{breiman2001random}
+\BKM@entry{id=11,open,dest={73756273656374696F6E2E352E31},srcline={574}}{526573756C7473}
 \@writefile{toc}{\contentsline {paragraph}{Ames, Iowa housing data}{9}{section.5}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Analysis plan}{9}{section.5}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Amputing data}{9}{section.5}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Results}{9}{subsection.5.1}\protected@file@percent }
-\BKM@entry{id=12,open,dest={73656374696F6E2E36},srcline={621}}{44697363757373696F6E20616E64207265636F6D6D656E646174696F6E73}
+\BKM@entry{id=12,open,dest={73656374696F6E2E36},srcline={625}}{44697363757373696F6E20616E64207265636F6D6D656E646174696F6E73}
 \@writefile{toc}{\contentsline {paragraph}{Interpretation}{10}{subsection.5.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {6}Discussion and recommendations}{10}{section.6}\protected@file@percent }
 \newlabel{sec:discuss}{{6}{10}{Discussion and recommendations}{section.6}{}}
@@ -99,10 +105,10 @@
 \newlabel{fig:workflow_ml}{{1}{17}{A workflow to develop and validate a pipeline modeling algorithm. Pipeline parameter values may be set apriori or determined empirically using cross validation. Once parameter values are fixed, a final model is developed by training the modeling pipeline using the training data. The final model is externally validated by assessing the accuracy of its predictions in the testing data.\relax }{figure.caption.7}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Workflows for cross validation (CV) incorporating imputation of missing values. The difference in the workflows is where imputation is performed. The standard workflow, $\texttt  {CV}\tmspace  -\thinmuskip {.1667em}\circlearrowright \tmspace  -\thinmuskip {.1667em}\texttt  {I}$, imputes missing values during each replicate of CV. The experimental workflow, $\texttt  {I}\tmspace  -\thinmuskip {.1667em}\tmspace  -\thinmuskip {.1667em}\rightarrow \tmspace  -\thinmuskip {.1667em}\texttt  {CV}$, imputes missing values prior to CV. Critically, $\texttt  {I}\tmspace  -\thinmuskip {.1667em}\tmspace  -\thinmuskip {.1667em}\rightarrow \tmspace  -\thinmuskip {.1667em}\texttt  {CV}$ means imputation happens once, whereas in $\texttt  {CV}\tmspace  -\thinmuskip {.1667em}\circlearrowright \tmspace  -\thinmuskip {.1667em}\texttt  {I}$ the imputation procedure occurs for each fold, adding computational time.\relax }}{18}{figure.caption.8}\protected@file@percent }
 \newlabel{fig:workflow_cv_bothways}{{2}{18}{Workflows for cross validation (CV) incorporating imputation of missing values. The difference in the workflows is where imputation is performed. The standard workflow, $\texttt {CV}\!\circlearrowright \!\texttt {I}$, imputes missing values during each replicate of CV. The experimental workflow, $\texttt {I}\!\!\rightarrow \!\texttt {CV}$, imputes missing values prior to CV. Critically, $\texttt {I}\!\!\rightarrow \!\texttt {CV}$\space means imputation happens once, whereas in $\texttt {CV}\!\circlearrowright \!\texttt {I}$\space the imputation procedure occurs for each fold, adding computational time.\relax }{figure.caption.8}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces External generalization error and internal estimates of generalization error using $\texttt  {I}\tmspace  -\thinmuskip {.1667em}\tmspace  -\thinmuskip {.1667em}\rightarrow \tmspace  -\thinmuskip {.1667em}\texttt  {CV}$ and $\texttt  {CV}\tmspace  -\thinmuskip {.1667em}\circlearrowright \tmspace  -\thinmuskip {.1667em}\texttt  {I}$. The $R^2$ values are plotted as a function of the number of nearest neighbors used to impute missing data, and the panel rows show results with 100, 500, 1000, and 5000 observations in the training data. The scenarios are described in Section \ref  {subsec:data_gen}. The peaks of all three curves conistently appear to be at the same number of neighbors. While $\texttt  {I}\tmspace  -\thinmuskip {.1667em}\tmspace  -\thinmuskip {.1667em}\rightarrow \tmspace  -\thinmuskip {.1667em}\texttt  {CV}$ error estimates have a slight positive bias, as noted in section \ref  {subsec:sim_results}, they also have less variability than error estimates using $\texttt  {CV}\tmspace  -\thinmuskip {.1667em}\circlearrowright \tmspace  -\thinmuskip {.1667em}\texttt  {I}$.\relax }}{19}{figure.caption.9}\protected@file@percent }
-\newlabel{fig:sim_r2}{{3}{19}{External generalization error and internal estimates of generalization error using $\texttt {I}\!\!\rightarrow \!\texttt {CV}$\space and $\texttt {CV}\!\circlearrowright \!\texttt {I}$. The $R^2$ values are plotted as a function of the number of nearest neighbors used to impute missing data, and the panel rows show results with 100, 500, 1000, and 5000 observations in the training data. The scenarios are described in Section \ref {subsec:data_gen}. The peaks of all three curves conistently appear to be at the same number of neighbors. While $\texttt {I}\!\!\rightarrow \!\texttt {CV}$\space error estimates have a slight positive bias, as noted in section \ref {subsec:sim_results}, they also have less variability than error estimates using $\texttt {CV}\!\circlearrowright \!\texttt {I}$.\relax }{figure.caption.9}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces External generalization error and computation time for random forest models and linear regression models tuned using $\texttt  {I}\tmspace  -\thinmuskip {.1667em}\tmspace  -\thinmuskip {.1667em}\rightarrow \tmspace  -\thinmuskip {.1667em}\texttt  {CV}$ and $\texttt  {CV}\tmspace  -\thinmuskip {.1667em}\circlearrowright \tmspace  -\thinmuskip {.1667em}\texttt  {I}$. A hex-bin plot was used to\relax }}{20}{figure.caption.10}\protected@file@percent }
-\newlabel{fig:ames_cmp_time}{{4}{20}{External generalization error and computation time for random forest models and linear regression models tuned using $\texttt {I}\!\!\rightarrow \!\texttt {CV}$\space and $\texttt {CV}\!\circlearrowright \!\texttt {I}$. A hex-bin plot was used to\relax }{figure.caption.10}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces External generalization error and internal estimates of generalization error using $\texttt  {I}\tmspace  -\thinmuskip {.1667em}\tmspace  -\thinmuskip {.1667em}\rightarrow \tmspace  -\thinmuskip {.1667em}\texttt  {CV}$ and $\texttt  {CV}\tmspace  -\thinmuskip {.1667em}\circlearrowright \tmspace  -\thinmuskip {.1667em}\texttt  {I}$. The $R^2$ values are plotted as a function of the number of nearest neighbors used to impute missing data, and the panel rows show results with 100, 500, 1000, and 5000 observations in the training data. The scenarios are described in Section \ref  {subsec:data_gen}. The peaks of all three curves consistently appear to be at the same number of neighbors. While $\texttt  {I}\tmspace  -\thinmuskip {.1667em}\tmspace  -\thinmuskip {.1667em}\rightarrow \tmspace  -\thinmuskip {.1667em}\texttt  {CV}$ error estimates have a slight positive bias, as noted in section \ref  {subsec:sim_results}, they also have less variability than error estimates using $\texttt  {CV}\tmspace  -\thinmuskip {.1667em}\circlearrowright \tmspace  -\thinmuskip {.1667em}\texttt  {I}$.\relax }}{19}{figure.caption.9}\protected@file@percent }
+\newlabel{fig:sim_r2}{{3}{19}{External generalization error and internal estimates of generalization error using $\texttt {I}\!\!\rightarrow \!\texttt {CV}$\space and $\texttt {CV}\!\circlearrowright \!\texttt {I}$. The $R^2$ values are plotted as a function of the number of nearest neighbors used to impute missing data, and the panel rows show results with 100, 500, 1000, and 5000 observations in the training data. The scenarios are described in Section \ref {subsec:data_gen}. The peaks of all three curves consistently appear to be at the same number of neighbors. While $\texttt {I}\!\!\rightarrow \!\texttt {CV}$\space error estimates have a slight positive bias, as noted in section \ref {subsec:sim_results}, they also have less variability than error estimates using $\texttt {CV}\!\circlearrowright \!\texttt {I}$.\relax }{figure.caption.9}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces External generalization error (y-axis) and time required to impute missing values (x-axis) for the Ames housing data. $\texttt  {I}\tmspace  -\thinmuskip {.1667em}\tmspace  -\thinmuskip {.1667em}\rightarrow \tmspace  -\thinmuskip {.1667em}\texttt  {CV}$ and $\texttt  {CV}\tmspace  -\thinmuskip {.1667em}\circlearrowright \tmspace  -\thinmuskip {.1667em}\texttt  {I}$ were applied, separately, to select $k$, the number of nearest neighbors used to impute missing values, prior to fitting and externally validating a prediction model. While the median generalization error is practically equivalent regardless of which CV method was used, the time required for imputation is approximately 10 (\textit  {i.e., }the number of folds in CV) times higher using $\texttt  {CV}\tmspace  -\thinmuskip {.1667em}\circlearrowright \tmspace  -\thinmuskip {.1667em}\texttt  {I}$ versus $\texttt  {I}\tmspace  -\thinmuskip {.1667em}\tmspace  -\thinmuskip {.1667em}\rightarrow \tmspace  -\thinmuskip {.1667em}\texttt  {CV}$.\relax }}{20}{figure.caption.10}\protected@file@percent }
+\newlabel{fig:ames_cmp_time}{{4}{20}{External generalization error (y-axis) and time required to impute missing values (x-axis) for the Ames housing data. $\texttt {I}\!\!\rightarrow \!\texttt {CV}$\space and $\texttt {CV}\!\circlearrowright \!\texttt {I}$\space were applied, separately, to select $k$, the number of nearest neighbors used to impute missing values, prior to fitting and externally validating a prediction model. While the median generalization error is practically equivalent regardless of which CV method was used, the time required for imputation is approximately 10 (\textit {i.e., }the number of folds in CV) times higher using $\texttt {CV}\!\circlearrowright \!\texttt {I}$\space versus $\texttt {I}\!\!\rightarrow \!\texttt {CV}$.\relax }{figure.caption.10}{}}
 \bibdata{bibfile.bib}
 \BKM@entry{id=13,open,dest={6669677572652E63617074696F6E2E3130},srcline={1}}{5265666572656E636573}
 \bibcite{kuhn2013applied}{{1}{}{{}}{{}}}
@@ -117,12 +123,17 @@
 \bibcite{van2018flexible}{{10}{}{{}}{{}}}
 \bibcite{kuhn2019feature}{{11}{}{{}}{{}}}
 \bibcite{jerez2010missing}{{12}{}{{}}{{}}}
-\bibcite{neunhoeffer2019cross}{{13}{}{{}}{{}}}
-\bibcite{softImpute}{{14}{}{{}}{{}}}
-\bibcite{morris2019using}{{15}{}{{}}{{}}}
-\bibcite{mice}{{16}{}{{}}{{}}}
+\bibcite{breiman}{{13}{}{{}}{{}}}
+\bibcite{neunhoeffer2019cross}{{14}{}{{}}{{}}}
+\bibcite{softImpute}{{15}{}{{}}{{}}}
+\bibcite{morris2019using}{{16}{}{{}}{{}}}
+\bibcite{mice}{{17}{}{{}}{{}}}
 \@writefile{toc}{\contentsline {section}{References\begingroup \let \let \let \let \@unexpandable@protect \xdef {\MakeUppercase  {References}}{\MakeUppercase  {References}}{{\MakeUppercase  {References}}{\MakeUppercase  {References}}}\@temptokena {{\MakeUppercase  {References}}{\MakeUppercase  {References}}}\mark {\thm@preskip 6.0pt\thm@postskip 6.0pt\relax \thm@headfont {\bfseries  }\thm@headpunct {.}}\endgroup }{21}{figure.caption.10}\protected@file@percent }
-\bibcite{de2011ames}{{17}{}{{}}{{}}}
-\bibcite{AmesHousing}{{18}{}{{}}{{}}}
+\bibcite{tibshirani1996regression}{{18}{}{{}}{{}}}
+\bibcite{gower1971general}{{19}{}{{}}{{}}}
+\bibcite{glmnet}{{20}{}{{}}{{}}}
+\bibcite{de2011ames}{{21}{}{{}}{{}}}
+\bibcite{AmesHousing}{{22}{}{{}}{{}}}
+\bibcite{breiman2001random}{{23}{}{{}}{{}}}
 \FirstPg{0}\LastPg{21}
 \providecommand\NAT@force@numbers{}\NAT@force@numbers

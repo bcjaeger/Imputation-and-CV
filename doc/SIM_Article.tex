@@ -253,13 +253,13 @@ Pipeline parameter values may be set apriori or determined empirically
 \(v\)-fold CV. We refer to the \(v-1\) folds and 1 remaining fold used
 to internally train and test a modeling algorithm as \textbf{analysis}
 and \textbf{assessment} sets, respectively, to avoid notation abuse of
-the terms `training' and `testing.' If CV is applied to facilitate
-selection of pipeline parameter values, it is critical that analysis
-data are separated from assessment data before any `learning' is done.
-The entire \emph{supervised} pipeline must be run using only the
-assessment data. This applies both to supervised data pre-processing
-steps (\textit{e.g., }selecting all variables with high correlation to
-the outcome) as well as supervised modeling procedures
+the terms ``training'' and ``testing.'' \cite{breiman} If CV is applied
+to facilitate selection of pipeline parameter values, it is critical
+that analysis data are separated from assessment data before any
+`learning' is done. The entire \emph{supervised} pipeline must be run
+using only the assessment data. This applies both to supervised data
+pre-processing steps (\textit{e.g., }selecting all variables with high
+correlation to the outcome) as well as supervised modeling procedures
 (\textit{e.g., }regression). `Data leakage' can occur when outcome
 information from the assessment set is leveraged to modify the analysis
 set, \textit{e.g., }supervised variable selection is performed on a
@@ -363,6 +363,8 @@ the study. We applied this design to generate a training set of varying
 size (100, 500, 1000, or 5000) along with an external validation set
 comprising 10,000 observations in each simulated replicate.
 
+\paragraph{Data generation scenarios}
+
 We created three data-generation `scenarios'. In scenario 1, the
 observed data are independent and identically distributed (iid). In
 scenario 2, the data are iid conditional on an observed grouping
@@ -396,33 +398,35 @@ external validation set.
 
 We applied \(k\)-nearest-neighbor imputation to handle MD and least
 absolute shrinkage and selection operator (LASSO) regression to develop
-prediction functions throughout the simulated experiments. The LASSO
-model is an appropriate model for these simulations since all data were
-generated with linear, independent effects. Nearest neighbor aggregation
-was used to form imputed values in the training and testing set and also
-in the analysis and assessment set for
-$\texttt{CV}\!\circlearrowright\!\texttt{I}$. We created one imputed
-dataset for each \(k \in \lbrace 1, 2, \ldots, 35\rbrace\). We selected
-a value for the regularization parameter \(\lambda\) in each imputed
-dataset, separately, using 10-fold CV
-(\textit{i.e., }\texttt{cv.glmnet}). The \(\lambda\) value selected was
-the one that minimized the model's cross-validated RMSE. The value of
-\(k\) that minimized cross-validated RMSE was used to impute the entire
-training set prior to fitting a final \texttt{cv.glmnet} model.
+prediction functions throughout the simulated
+experiments.\cite{tibshirani1996regression} The LASSO model is an
+appropriate model for these simulations since all data were generated
+with linear, independent effects. Nearest neighbor aggregation based on
+Gower's distance was used to form imputed values in the training and
+testing set and also in the analysis and assessment set for
+$\texttt{CV}\!\circlearrowright\!\texttt{I}$.\cite{gower1971general} We
+created one imputed dataset for each
+\(k \in \lbrace 1, 2, \ldots, 35\rbrace\). We selected a value for the
+regularization parameter \(\lambda\) in each imputed dataset,
+separately, using 10-fold CV
+(\textit{i.e., }\texttt{cv.glmnet}).\cite{glmnet} The \(\lambda\) value
+selected was the one that minimized the model's cross-validated RMSE.
+The value of \(k\) that minimized cross-validated RMSE was used to
+impute the entire training set prior to fitting a final
+\texttt{cv.glmnet} model.
 
 \paragraph{Analysis plan}
 
-We varied the scenario (1, 2, or 3; described in a preceding paragraph),
-missing mechanism (MCAR or MAR), ratio of predictor variables to junk
-variables (1:1, 1:4, and 1:49; junk variables have no relationship to
-the simulated outcome), and the number of training observations (\(N\) =
-100, 500, 1,000, 5,000). We present results for each of 72 settings
-determined by these parameters and also provide overall summary
-statistics for scenarios 1, 2, and 3 when data are MCAR and MAR
-(\textit{i.e., }aggregating over training sample size and predictor to
-noise ratio). In each simulation replication, we computed the true
-external \(R^2\) in the validation set for each potential value of
-nearest neighbors
+We varied the scenario (1, 2, or 3; described above), missing mechanism
+(MCAR or MAR), ratio of predictor variables to junk variables (1:1, 1:4,
+and 1:49; junk variables have no relationship to the simulated outcome),
+and the number of training observations (\(N\) = 100, 500, 1,000,
+5,000). We present results for each of 72 settings determined by these
+parameters and also provide overall summary statistics for scenarios 1,
+2, and 3 when data are MCAR and MAR (\textit{i.e., }aggregating over
+training sample size and predictor to noise ratio). In each simulation
+replication, we computed the true external \(R^2\) in the validation set
+for each potential value of nearest neighbors
 (\textit{i.e., }\(k \in \lbrace 1, 2, \ldots, 35 \rbrace\)). We also
 estimated external \(R^2\) for each value of \(k\) using
 $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and
@@ -544,14 +548,14 @@ We conducted a resampling study where the Ames housing data was randomly
 split into training (\(N = 2198\), 75\%) and testing (\(N = 732\), 25\%)
 sets in each of 5,000 iterations. In each resampling replicate, we
 implemented two separate modeling strategies to develop prediction
-functions using the training set: (1) unpenalized linear regression and
-(2) random forests. We also implemented two imputation strategies: (1)
-nearest neighbor imputation using 1, 2, \ldots, 35 neighbors and (2)
-mean and mode imputation for numeric and nominal variables,
-respectively. In addition to imputation, data were pre-processed by
-lumping values in discrete variables into an `other' category if the
-value accounted for less than 10\% of the observed values. Both CV
-techniques
+functions using the training set: (1) un-penalized linear regression and
+(2) random forests.\cite{breiman2001random} We also implemented two
+imputation strategies: (1) nearest neighbor imputation using 1, 2,
+\ldots, 35 neighbors and (2) mean and mode imputation for numeric and
+nominal variables, respectively. In addition to imputation, data were
+pre-processed by lumping values in discrete variables into an `other'
+category if the value accounted for less than 10\% of the observed
+values. Both CV techniques
 (\textit{i.e., }$\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and
 $\texttt{I}\!\!\rightarrow\!\texttt{CV}$) were implemented to estimate
 the external generalization error of the linear regression and random
@@ -653,35 +657,36 @@ of roughly \(v\), the number of folds employed by CV.
 
 Unsupervised imputation has two interesting characteristics relevant to
 predictive modeling. First, it allows for imputation of testing data
-whose outcome data are unobserved (not missing),
-\textit{e.g., }predicting risk for incident cardiovascular disease among
-adults with no history of cardiovascular disease. Second, as the current
-analysis has shown, unsupervised imputation can be applied before CV in
-select settings without inducing overly optimistic estimates of model
-error. The benefits of this approach include (1) reduced computational
-overhead, (2) reduced variance in model error estimates, and (3) little
-difference in the performance of downstream models. If investigators are
-confident that training and testing data are identically distributed or
-are primarily concerned with selecting optimal tuning parameters,
+without requiring observed outcome values in those data. This
+characteristic is ideal for deploying prediction models in the real
+world, where outcome values are almost always unknown at the time of
+prediction (otherwise, why would we be predicting them?). Second, as the
+current analysis has shown, unsupervised imputation can be applied
+before CV in select scenarios without inducing overly optimistic
+estimates of model error. The benefits of this approach include (1)
+reduced computational overhead, (2) reduced variance in model error
+estimates, and (3) little difference in the performance of downstream
+models. If investigators are confident that training and testing data
+are identically distributed or are primarily concerned with selecting
+optimal tuning parameters,
 $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space may be an extremely
-convenient workflow to implement. However, the drawbacks of
+valuable workflow to implement. However, the drawbacks of
 $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space include increased bias
 for model estimation, particularly in settings similar to scenario 2
 (described in Section \ref{subsec:data_gen}). If investigators are
 primarily interested in estimating model error without bias and cannot
 rule out the possibility that testing data are drawn from a different
 population or distribution than their training data, the current study
-clearly suggests
-$\texttt{CV}\!\circlearrowright\!\texttt{I}$\space should be applied
-instead of $\texttt{I}\!\!\rightarrow\!\texttt{CV}$. However, it is
-worth noting that almost all prediction modeling decisions require
+suggests $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space should be
+applied instead of $\texttt{I}\!\!\rightarrow\!\texttt{CV}$. However, it
+is worth noting that almost all prediction modeling decisions require
 balancing bias and variance to optimize precision. Our results do not
 indicate any strong difference between
 $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space and
-$\texttt{CV}\!\circlearrowright\!\texttt{I}$with regard to precision
-(\textit{i.e., }RMSE, see \textbf{Table} \ref{tab:rmse}). We suspect
-that in most prediction modeling applications, precision rather than
-bias is of primary interest.
+$\texttt{CV}\!\circlearrowright\!\texttt{I}$\space with regard to
+precision (\textit{i.e., }RMSE, see \textbf{Table} \ref{tab:rmse}). We
+suspect that in most prediction modeling applications, precision rather
+than bias is of primary interest.
 
 The current study has several strengths. We implemented computational
 experiments using simulated and real data. We included different
@@ -975,7 +980,7 @@ N & $\texttt{CV}\!\circlearrowright\!\texttt{I}$& $\texttt{I}\!\!\rightarrow\!\t
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{figs/fig_trends_by_nbrs} 
-\caption{External generalization error and internal estimates of generalization error using $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space and $\texttt{CV}\!\circlearrowright\!\texttt{I}$. The $R^2$ values are plotted as a function of the number of nearest neighbors used to impute missing data, and the panel rows show results with 100, 500, 1000, and 5000 observations in the training data. The scenarios are described in Section \ref{subsec:data_gen}. The peaks of all three curves conistently appear to be at the same number of neighbors. While $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space error estimates have a slight positive bias, as noted in section \ref{subsec:sim_results}, they also have less variability than error estimates using $\texttt{CV}\!\circlearrowright\!\texttt{I}$.}
+\caption{External generalization error and internal estimates of generalization error using $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space and $\texttt{CV}\!\circlearrowright\!\texttt{I}$. The $R^2$ values are plotted as a function of the number of nearest neighbors used to impute missing data, and the panel rows show results with 100, 500, 1000, and 5000 observations in the training data. The scenarios are described in Section \ref{subsec:data_gen}. The peaks of all three curves consistently appear to be at the same number of neighbors. While $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space error estimates have a slight positive bias, as noted in section \ref{subsec:sim_results}, they also have less variability than error estimates using $\texttt{CV}\!\circlearrowright\!\texttt{I}$.}
 \label{fig:sim_r2}
 \end{figure}
 
@@ -983,7 +988,7 @@ N & $\texttt{CV}\!\circlearrowright\!\texttt{I}$& $\texttt{I}\!\!\rightarrow\!\t
 
 \begin{figure}
 \includegraphics{figs/fig_ames_cmp_time} 
-\caption{External generalization error and computation time for random forest models and linear regression models tuned using $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space and $\texttt{CV}\!\circlearrowright\!\texttt{I}$. A hex-bin plot was used to}
+\caption{External generalization error (y-axis) and time required to impute missing values (x-axis) for the Ames housing data. $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space and $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space were applied, separately, to select $k$, the number of nearest neighbors used to impute missing values, prior to fitting and externally validating a prediction model. While the median generalization error is practically equivalent regardless of which CV method was used, the time required for imputation is approximately 10 (\textit{i.e., }the number of folds in CV) times higher using $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space versus $\texttt{I}\!\!\rightarrow\!\texttt{CV}$.}
 \label{fig:ames_cmp_time}
 \end{figure}
 
