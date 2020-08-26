@@ -8,12 +8,15 @@ make_fig_trends_by_nbrs <- function(sim_data) {
 
   ggdat <- sim_data %>% 
     separate(key, into = c('scenario', 'miss_mech')) %>% 
-    mutate(scenario = recode(
-      scenario,
-      s1 = 'Scenario 1',
-      s2 = 'Scenario 2',
-      s3 = 'Scenario 3'
-    ))
+    mutate(
+      scenario = recode(
+        scenario,
+        s1 = 'Scenario 1',
+        s2 = 'Scenario 2',
+        s3 = 'Scenario 3'
+      ),
+      nobs = paste("N =", format(nobs, big.mark = ','))
+    )
   
   ggdat_estimates <- filter(ggdat, cv_strat != 'ex_dat') %>% 
     mutate(
@@ -23,7 +26,7 @@ make_fig_trends_by_nbrs <- function(sim_data) {
         imp_cv = 'imputation before CV.'
       ),
       cv_strat = fct_relevel(factor(cv_strat),
-                             'imputation before data splitting.')
+                             'imputation before CV')
     )
   
   ggdat_truth <- filter(ggdat, cv_strat == 'ex_dat')

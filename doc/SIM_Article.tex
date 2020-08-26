@@ -495,13 +495,13 @@ overly optimistic error estimates. The overall standard deviation of
 \(R^2\) estimates was higher for
 $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space versus
 $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space in all three scenarios
-and both missing data mechanisms. The difference in standard deviation
-was most pronounced in scenario 3 when data were MCAR (0.07314
+and both missing data mechanisms ( \textbf{Table} \ref{tab:variance}).
+The difference in standard deviation was most pronounced in scenario 3
+when data were MCAR (0.07314
 {[}$\texttt{CV}\!\circlearrowright\!\texttt{I}${]} versus 0.06747
-{[}$\texttt{I}\!\!\rightarrow\!\texttt{CV}${]}; \textbf{Table}
-\ref{tab:variance}). Despite the optimistic bias of
-$\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space in scenario 2, the
-reduced variance of this approach lead to a lower overall RMSE for
+{[}$\texttt{I}\!\!\rightarrow\!\texttt{CV}${]}). Despite the optimistic
+bias of $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space in scenario 2,
+the reduced variance of this approach lead to a lower overall RMSE for
 external \(R^2\) compared to
 $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space (\textbf{Table}
 \ref{tab:rmse}). When the data were MCAR in scenario 2,
@@ -516,10 +516,14 @@ When $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and
 $\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space were applied to select
 tuning parameters, the overall mean external \(R^2\) was higher using
 $\texttt{CV}\!\circlearrowright\!\texttt{I}$\space in 22 out of 78
-comparisons (28\%; \textbf{Table} \ref{tab:tune}). The greatest overall
-difference in mean \(R^2\) between downstream models occurred in
-scenario 1 when the data were MAR (absolute difference in model \(R^2\):
-0.00028; relative difference in model \(R^2\) : 0.07\%).
+comparisons (28\%; \textbf{Table} \ref{tab:tune}). However, the
+differences in mean external \(R^2\) between models tuned using
+$\texttt{CV}\!\circlearrowright\!\texttt{I}$\space and
+$\texttt{I}\!\!\rightarrow\!\texttt{CV}$\space were relatively minor.
+For instance, the greatest overall difference in mean \(R^2\) between
+downstream models occurred in scenario 1 when the data were MAR
+(absolute difference in model \(R^2\): 0.00028; relative difference in
+model \(R^2\) : 0.07\%).
 
 \section{Real data experiments} \label{sec:app}
 
